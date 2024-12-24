@@ -26,7 +26,7 @@ const login = async (req, res, next) => {
 
 const signup = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phone_number } = req.body;
     const userExist = await User.findOne({ email: email });
     if (userExist) {
       throw new Error("User already exists");
@@ -36,6 +36,7 @@ const signup = async (req, res, next) => {
       name,
       email,
       password,
+      phone_number,
       role,
     });
     if (!userdata) {

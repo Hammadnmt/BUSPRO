@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const { createBus } = require("../controller/bus/busController");
+const {
+  createBus,
+  getBus,
+  getBuses,
+  updateBus,
+  deleteBus,
+} = require("../controller/bus/busController");
 
 router.route("/create").post(createBus);
+router.route("/").get(getBuses);
+router.route("/:id").get(getBus).patch(updateBus).delete(deleteBus);
 
 module.exports = router;
-// router.route("/signup").post(signup);
-// router.route("/logout").post(logout);
-// const userSchema = require("../validator/usrValidator");

@@ -2,23 +2,14 @@ const Bus = require("../../model/bus/BusModel");
 
 const createBus = async (req, res, next) => {
   try {
-    const { busNumber, source, destination, departure_time } = req.body;
-    console.log(req.body);
-    const alreadyExists = await Bus.findOne({
+    const { busNumber, total_seats } = req.body;
+    const busdata = await Bus.create({
       bus_no: busNumber,
-      source: source,
-      destination: destination,
-      departure_time: departure_time,
+      total_seats,
     });
-    if (alreadyExists) {
-      throw new Error("Bus Already Exists");
+    if (!busdata) {
+      throw new Error("Bus Not Created");
     }
-    await Bus.create({
-      bus_no: busNumber,
-      source: source,
-      destination: destination,
-      departure_time: departure_time,
-    });
     res.json({
       message: "Bus Created Successfully",
     });
@@ -27,6 +18,79 @@ const createBus = async (req, res, next) => {
   }
 };
 
+const getBuses = async (req, res, next) => {
+  try {
+    const buses = await Bus.find();
+    if (!buses) {
+      throw new Error("No Bus Found");
+    }
+    res.json({
+      status: true,
+      data: buses,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateBus = async (req, res, next) => {
+  try {
+    const { busNumber, total_seats } = req.body;
+    const updatedBus = await Bus.findByIdAndUpdate(
+      req.params.id,
+      { busNumber, total_seats },
+      {
+        new: true,
+      }
+    );
+    if (!updatedBus) {
+      throw new Error("No Bus Found");
+    }
+    res.json({
+      status: true,
+      HttpStatusCode: 200,
+      data: updatedBus,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getBus = async (req, res, next) => {
+  try {
+    const bus = await Bus.findOne(req.params.id);
+    if (!bus) {
+      throw new Error("No Bus Found");
+    }
+    res.json({
+      status: true,
+      data: bus,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteBus = async (req, res, next) => {
+  try {
+    const { departure_time } = req.body;
+    const deletedBus = await Bus.findOneAndDelete({ departure_time });
+    if (!deletedBus) {
+      throw new Error("No Bus Found");
+    }
+    res.json({
+      status: 200,
+      status: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createBus,
+  getBus,
+  updateBus,
+  deleteBus,
+  getBuses,
 };

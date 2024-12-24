@@ -5,10 +5,12 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      lowercase: true,
       required: [true, "Name is required"],
     },
     email: {
       type: String,
+      lowercase: true,
       required: [true, "Email is required"],
       unique: true,
       match: [
@@ -24,8 +26,8 @@ const userSchema = new mongoose.Schema(
     phone_number: {
       type: String,
       required: [true, "Phone number is required"],
-      unique: true,
       match: [/^\+92\d{10}$/, "Please fill a valid phone number"],
+      unique: true,
     },
     role: {
       type: String,

@@ -9,7 +9,7 @@ const genToken = (data) => {
         role: data.role,
       },
     },
-    process.env.ACCESS_SECRET_TOKEN,
+    process.env.JWT_SECRET,
     { expiresIn: "15m" }
   );
   return accessToken;
