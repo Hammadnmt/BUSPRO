@@ -9,5 +9,5 @@ DB_HOST=mongodb://localhost:27017/Project
 
 
 # Authentication & Authorization
-JWT_SECRET=abc$123%xyz^098
-JWT_EXPIRES_IN=3600        # Token expiration time in seconds
+JWT_SECRET=abc$123%xyz098
+JWT_EXPIRES_IN=3600

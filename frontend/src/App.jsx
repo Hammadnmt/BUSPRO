@@ -1,17 +1,17 @@
-import Signup from "./components/Signup";
-import Login from "./components/Login";
-import AdminLayout from "./components/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./components/Dashboard";
-import Users from "./pages/users";
 import Booking from "./pages/Booking";
+import Users from "./pages/users";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 import NotFound from "./pages/404";
-import "react-toastify/dist/ReactToastify.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer } from "react-toastify";
 import { Routes, Route, BrowserRouter } from "react-router";
 import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import TravelSearchForm from "./components/SearchForm";
+
 export default function App() {
   return (
     <>
@@ -23,13 +23,14 @@ export default function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="" element={<ProtectedRoute />}>
               <Route index path="dashboard" element={<Dashboard />} />
+              <Route path="create" element={<TravelSearchForm />} />
               <Route path="user" element={<Users />} />
               <Route path="booking" element={<Booking />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter >
     </>
   );
 }
