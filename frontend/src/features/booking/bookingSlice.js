@@ -13,17 +13,16 @@ const bookApi = baseApi.injectEndpoints({
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
     getBookings: builder.query({
-      query: (userdata) => ({
+      query: () => ({
         url: "/booking/",
         method: "GET",
       }),
-      transformErrorResponse: (response, meta, arg) => {
-        console.log(response.data);
-      },
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
     }),
     deleteBooking: builder.mutation({
       query: (id) => ({
-        url: `/booking/:${id}`,
+        url: `/booking/${id}`,
         method: "DELETE",
       }),
       transformResponse: (response, meta, arg) => response.data,
@@ -31,20 +30,35 @@ const bookApi = baseApi.injectEndpoints({
     }),
     updateBooking: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/booking/:${id}`,
+        url: `/booking/${id}`,
         method: "PATCH",
         body: data,
       }),
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.status,
     }),
-  }),
+    getBookingByUserId: builder.query({
+      query: (id) => ({
+        url: `/booking/user/${id}`,
+        method: "GET",
+      }),
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
+    getBookingsByTripId: builder.query({
+      query: (id) => ({
+        url: `/booking/trip/${id}`,
+        method: "GET",
+      }),
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
+  })
 });
 
 export const {
-  useCreateBookingMutation,
   useGetBookingsQuery,
+  useCreateBookingMutation,
   useDeleteBookingMutation,
-  useUpdateBookingMutation,
-  useGe,
+  useUpdateBookingMutation
 } = bookApi;

@@ -7,6 +7,9 @@ const {
   createBooking,
   getBookings,
   deleteBooking,
+  updateBooking,
+  getBookingByUserId,
+  getBookingByTripId,
 } = require("../controller/booking/bookingController");
 
 router.route("/").get(authMiddleware, getBookings);
@@ -14,6 +17,8 @@ router.route("/create").post(authMiddleware, createBooking);
 router
   .route("/:id")
   .delete(authMiddleware, roleMiddleware, deleteBooking)
-  .patch();
+  .patch(authMiddleware, roleMiddleware, updateBooking);
 
-  module.exports = router;
+router.route("/user/:id").get(authMiddleware, getBookingByUserId)
+router.route("/trip/:id").get(authMiddleware, roleMiddleware, getBookingByTripId)
+module.exports = router;

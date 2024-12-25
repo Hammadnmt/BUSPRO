@@ -8,9 +8,11 @@ const {
   updateBus,
   deleteBus,
 } = require("../controller/bus/busController");
+const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
-router.route("/create").post(createBus);
-router.route("/").get(getBuses);
-router.route("/:id").get(getBus).patch(updateBus).delete(deleteBus);
+router.route("/create").post(authMiddleware, roleMiddleware, createBus);
+router.route("/").get(authMiddleware, roleMiddleware, getBuses);
+router.route("/:id").get(authMiddleware, roleMiddleware, getBus).patch(authMiddleware, roleMiddleware, updateBus).delete(authMiddleware, roleMiddleware, deleteBus);
 
 module.exports = router;

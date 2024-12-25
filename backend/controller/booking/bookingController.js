@@ -35,7 +35,15 @@ const createBooking = async (req, res, next) => {
 //get booking
 const getBookings = async (req, res, next) => {
   try {
-    const booking = await Booking.find().populate("user").populate("trip");
+    const booking = await Booking.find()
+      .populate("user")
+      .populate({
+        path: "trip",
+        populate: [
+          { path: "Bus", model: "Bus" },
+          { path: "Route", model: "Route" },
+        ],
+      });
     res.status(200).json({
       status: "success",
       data: booking,
@@ -60,8 +68,58 @@ const deleteBooking = async (req, res, next) => {
   }
 };
 
+const updateBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findByIdAndUpdate(req.params.id);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+    res.status(200).json({
+      status: "success",
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getBookingByUserId = async (req, res, next) => {
+  try {
+    const booking = await Booking.find({ user: req.params.id }).populate("user").populate("trip");
+    if (!booking) {
+      throw new Error("Booking not found for this user");
+    }
+    res.status(200).json({
+      status: "success",
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getBookingByTripId = async (req, res, next) => {
+  try {
+    const booking = await Booking.find({ trip: req.params.id }).populate("user").populate("trip");
+    if (!booking) {
+      throw new Error("Booking not found for this trip");
+    }
+    res.status(200).json({
+      status: "success",
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 module.exports = {
   createBooking,
   getBookings,
+  getBookingByUserId,
+  getBookingByTripId,
+  updateBooking,
   deleteBooking,
 };

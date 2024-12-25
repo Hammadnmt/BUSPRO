@@ -3,11 +3,12 @@ const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config();
 const PORT = process.env.PORT || 3000;
-const authrouter = require("./routes/authRoute");
-const triprouter = require("./routes/tripRoute");
+const authRouter = require("./routes/authRoute");
+const tripRouter = require("./routes/tripRoute");
 const busRouter = require("./routes/busRoute");
-const bookingrouter = require("./routes/bookingRoute");
-const userrouter = require("./routes/userRoute");
+const bookingRouter = require("./routes/bookingRoute");
+const userRouter = require("./routes/userRoute");
+const routeRouter = require("./routes/routeRoute");
 const morgen = require("morgan");
 const cookieParser = require("cookie-parser");
 const validateJsonBody = require("./middleware/validJson");
@@ -19,7 +20,7 @@ const corsOptions = {
   credentials: true,
 };
 mongoose
-  .connect(process.env.DB_HOST)
+  .connect("mongodb://localhost:27017/Project")
   .then((result) => {
     console.log(`Db connected`);
   })
@@ -34,11 +35,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgen("dev"));
 
-app.use("/api/auth", authrouter);
-app.use("/api/user", userrouter);
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/route", routeRouter);
 app.use("/api/bus", busRouter);
-app.use("/api/trip", triprouter);
-app.use("/api/booking", bookingrouter);
+app.use("/api/trip", tripRouter);
+app.use("/api/booking", bookingRouter);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {

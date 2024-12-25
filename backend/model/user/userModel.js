@@ -53,6 +53,19 @@ userSchema.pre("save", async function (next) {
     next(err);
   }
 });
+userSchema.post("save", function (error, doc, next) {
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    if (error.keyPattern.email) {
+      next(new Error("Email already exists."));
+    } else if (error.keyPattern.phone_number) {
+      next(new Error("Phone number already exists."));
+    } else {
+      next(new Error("Duplicate field value found."));
+    }
+  } else {
+    next(error);
+  }
+});
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

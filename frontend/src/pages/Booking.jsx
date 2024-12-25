@@ -11,27 +11,27 @@ function Booking() {
   const navigate = useNavigate();
   const columns = [
     { header: "Name", key: "user_name" },
-    { header: "Bus", key: "bus" },
-    { header: "Route", key: "route" },
+    { header: "Bus", key: "bus_no" }, // Updated to bus_no based on Bus model
+    { header: "Route", key: "route" }, // This can be updated to show source-destination pair
     { header: "Travel Date", key: "travel_date" },
     { header: "Seat Number", key: "seat_no" },
     { header: "Gender", key: "gender" },
     { header: "Status", key: "status" },
   ];
 
+
   console.log(data);
 
-  const transformedData = data?.data?.map((entry) => ({
+  const transformedData = data?.map((entry) => ({
     user_name: entry.user ? entry.user.name : "N/A",
-    bus: entry.trip.Bus,
-    route: entry.trip.Route,
-    travel_date: entry.travel_date,
+    bus_no: entry.trip?.Bus?.bus_no || "N/A", // Accessing bus_no from Bus model
+    route: `${entry.trip?.Route?.source || "N/A"} - ${entry.trip?.Route?.destination || "N/A"}`, // Source and destination from Route model
+    travel_date: entry.trip?.travel_date,
     seat_no: entry.booked_seats[0]?.seat_no || "N/A",
     gender: entry.booked_seats[0]?.gender || "N/A",
-    status: entry.status,
+    status: entry.trip?.status || "N/A", // Status from Trip model
   }));
   // console.log(transformedData);
-
   const handleEdit = (id) => {
     navigate(`/admin/booking/${id}`);
   };
