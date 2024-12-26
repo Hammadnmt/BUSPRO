@@ -6,6 +6,7 @@ import Dashboard from "./components/Dashboard";
 import Users from "./pages/users";
 import BusPage from "./pages/Buses";
 import UpdateBus from "./components/Buses/updateBus";
+import CreateBus from "./components/Buses/CreateBus";
 import RoutePage from "./pages/routes";
 import TripPage from "./pages/TripPage";
 import Booking from "./pages/Booking";
@@ -33,7 +34,7 @@ export default function App() {
               <Route path="user" element={<Users />} />
               <Route path="bus" element={<BusPage />} />
               <Route path="/admin/bus/:id" element={<UpdateBus />} />
-              {/* <Route path="/admin/bus/create" element={<CreateProduct />} /> */}
+              <Route path="/admin/bus/create" element={<CreateBus />} />
               <Route path="route" element={<RoutePage />} />
               <Route path="trip" element={<TripPage />} />
               <Route path="booking" element={<Booking />} />

@@ -18,7 +18,7 @@ function BusPage() {
     { header: "Total Seats", key: "total_seats" },
   ];
   const handleAdd = () => {
-    navigate("/admin/trip/create");
+    navigate("/admin/bus/create");
   };
   const handleEdit = (id) => {
     navigate(`/admin/bus/${id}`);
