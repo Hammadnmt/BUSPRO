@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 // import Button from "../components/Button";
 import { Button } from "react-bootstrap";
-import Table from "react-bootstrap/Table"; 
+import Table from "react-bootstrap/Table";
 import Loader from "../components/Loading";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -33,7 +33,9 @@ export default function ReusableTable({
           <thead className="bg-indigo-600 text-white">
             <tr>
               {columns.map((col) => (
-                <th key={col.header} className="px-6 py-3 text-left"> {/* Use col.header as key */}
+                <th key={col.header} className="px-6 py-3 text-left">
+                  {" "}
+                  {/* Use col.header as key */}
                   {col.header}
                 </th>
               ))}
@@ -42,9 +44,14 @@ export default function ReusableTable({
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item._id || item._id?.toString()} className="hover:bg-gray-100">
+              <tr
+                key={item._id || item._id?.toString()}
+                className="hover:bg-gray-100"
+              >
                 {columns.map((col) => (
-                  <td key={col.key || col.header} className="px-6 py-4"> {/* Use col.key or col.header as key */}
+                  <td key={col.key || col.header} className="px-6 py-4">
+                    {" "}
+                    {/* Use col.key or col.header as key */}
                     {item[col.key]}
                   </td>
                 ))}

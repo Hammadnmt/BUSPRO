@@ -12,9 +12,17 @@ const tripApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
-    getBuses: builder.query({
+    getTrips: builder.query({
       query: () => ({
         url: "/trip/",
+        method: "GET",
+      }),
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
+    getTripByRoute: builder.query({
+      query: ({ to, from, date }) => ({
+        url: `/trip/search?to=${to}&from=${from}&date=${date}`,
         method: "GET",
       }),
       transformResponse: (response, meta, arg) => response.data,
@@ -42,7 +50,8 @@ const tripApi = baseApi.injectEndpoints({
 
 export const {
   useCreateTripMutation,
-  useGetBusesQuery,
+  useGetTripsQuery,
   useDeleteTripMutation,
   useUpdateTripMutation,
+  useLazyGetTripByRouteQuery,
 } = tripApi;

@@ -1,9 +1,60 @@
 const Trip = require("../../model/trip/tripModel");
+const Route = require("../../model/Route/routeModel");
 
 const getTrips = async (req, res, next) => {
   try {
-    const trips = await Trip.find();
-    res.json(trips);
+    const trips = await Trip.find({ Route: "676bba28662fd56b349503f3" })
+      .populate("Route")
+      .populate("Bus");
+    if (!trips) {
+      throw new Error("Trips not found");
+    }
+    res.json({
+      status: "success",
+      data: trips,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getTripByRoute = async (req, res, next) => {
+  try {
+    const { to, from, date } = req.query;
+    const [routedata] = await Route.find({ source: from, destination: to });
+    if (routedata.length == 0) {
+      throw new Error("No Route Exists for this Origin and Destination");
+    }
+    // res.json({
+    //   routedata,
+    // });
+    // const id = routedata._id;
+    // console.log(routedata);
+    const tripdata = await Trip.find({ Route: routedata._id })
+      .populate("Bus")
+      .populate("Route");
+    if (!tripdata) {
+      throw new Error("No Trip Exists");
+    }
+    res.json({
+      status: true,
+      data: tripdata,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getTripsBydate = async (req, res, next) => {
+  try {
+    const trips = await Trip.find().populate("Route").populate("Bus");
+    if (!trips) {
+      throw new Error("Trips not found");
+    }
+    res.json({
+      status: "success",
+      data: trips,
+    });
   } catch (error) {
     next(error);
   }
@@ -61,4 +112,11 @@ const updateTrip = async (req, res) => {
     next(error);
   }
 };
-module.exports = { getTrips, createTrip, getTrip, deleteTrip, updateTrip };
+module.exports = {
+  getTrips,
+  createTrip,
+  getTrip,
+  deleteTrip,
+  updateTrip,
+  getTripByRoute,
+};

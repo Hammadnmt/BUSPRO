@@ -1,146 +1,284 @@
-import React from 'react';
-import { Link } from "react-router"
-import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from "react";
+import { Row, Button, Col, Form, Card, ListGroup } from "react-bootstrap";
+import { ExpandMore } from "@mui/icons-material";
+import { useLazyGetTripByRouteQuery } from "../features/trip/tripSlice";
+import { useGetAllroutesQuery } from "../features/route/routeSlice";
+import { getCurrentDate } from "../utils/getCurrenDate";
+import { validateForm } from "../utils/validateSearchForm";
+
+// This functionality is working as Desired
 const TravelSearchForm = () => {
-    const handleSubmit = () => { };
-    const onSubmit = () => { }
-    const register = () => { }
-    const errors = () => { }
-    return (
-        // <Container className="d-flex justify-content-center align-items-center min-vh-100 min-vw-100">
-        <Row>
-            <Col>
-                <Card className="card">
-                    <Card.Body>
-                        <h3 className="text-center mb-4">Book You Ticket Here</h3>
-                        <Form
-                            onSubmit={handleSubmit(onSubmit)}
-                            className="d-flex justify-content-center align-items-center gap-3 min-vw-100"
+  const [formData, setFormData] = useState({
+    from: "",
+    to: "",
+    date: getCurrentDate(),
+  });
+  const { data: routeData } = useGetAllroutesQuery();
+  const [triggerQuery, { data, isLoading, isSuccess, isError }] =
+    useLazyGetTripByRouteQuery();
+
+  const [suggestions, setSuggestions] = useState({
+    from: [],
+    to: [],
+  });
+
+  const [showSuggestions, setShowSuggestions] = useState({
+    from: false,
+    to: false,
+  });
+
+  // Get unique source cities
+  const getSourceCities = () => {
+    if (!routeData) return [];
+    return [...new Set(routeData.map((route) => route.source))];
+  };
+
+  // Get destinations for selected source
+  const getDestinations = (source) => {
+    if (!routeData) return [];
+    return routeData
+      .filter((route) => route.source === source)
+      .map((route) => route.destination);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "from") {
+      const sourceSuggestions = getSourceCities().filter((city) =>
+        city.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions((prev) => ({
+        ...prev,
+        from: sourceSuggestions,
+      }));
+      setShowSuggestions((prev) => ({
+        ...prev,
+        from: true,
+      }));
+    } else if (name === "to" && formData.from) {
+      const destSuggestions = getDestinations(formData.from).filter((city) =>
+        city.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions((prev) => ({
+        ...prev,
+        to: destSuggestions,
+      }));
+      setShowSuggestions((prev) => ({
+        ...prev,
+        to: true,
+      }));
+    }
+  };
+
+  const handleChevronClick = (field) => {
+    if (field === "from") {
+      setSuggestions((prev) => ({
+        ...prev,
+        from: getSourceCities(),
+      }));
+    } else if (field === "to" && formData.from) {
+      setSuggestions((prev) => ({
+        ...prev,
+        to: getDestinations(formData.from),
+      }));
+    }
+    setShowSuggestions((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+  };
+
+  const handleSuggestionClick = (value, field) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setShowSuggestions((prev) => ({
+      ...prev,
+      [field]: false,
+    }));
+
+    // Clear destination if source changes
+    if (field === "from") {
+      setFormData((prev) => ({
+        ...prev,
+        to: "",
+      }));
+    }
+  };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".input-group")) {
+        setShowSuggestions({
+          from: false,
+          to: false,
+        });
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm) {
+      triggerQuery({
+        to: formData.to,
+        from: formData.from,
+        date: formData.date,
+      });
+      console.log(data);
+    }
+  };
+
+  const dropdownStyles = {
+    maxHeight: "200px",
+    overflowY: "auto",
+    border: "1px solid rgba(0,0,0,.125)",
+    borderRadius: "0.375rem",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+    backgroundColor: "white",
+  };
+
+  return (
+    <Row>
+      <Col>
+        <Card>
+          <Card.Body>
+            <h3 className="text-center mb-4">Book Your Ticket Here</h3>
+            <Form
+              onSubmit={onSubmit}
+              className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
+            >
+              <div className="position-relative w-100 w-md-auto">
+                <Form.Group className="mb-3 w-100">
+                  <div className="input-group">
+                    <Form.Control
+                      type="text"
+                      name="from"
+                      value={formData.from}
+                      placeholder="From (City)"
+                      onChange={handleChange}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSuggestions((prev) => ({
+                          ...prev,
+                          from: true,
+                        }));
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleChevronClick("from");
+                      }}
+                    >
+                      <ExpandMore className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </Form.Group>
+                {showSuggestions.from && suggestions.from.length > 0 && (
+                  <div
+                    style={dropdownStyles}
+                    className="position-absolute w-100 z-50"
+                  >
+                    <ListGroup variant="flush">
+                      {suggestions.from.map((city, index) => (
+                        <ListGroup.Item
+                          key={index}
+                          action
+                          onClick={() => handleSuggestionClick(city, "from")}
+                          className="cursor-pointer"
                         >
-                            <Form.Group className="mb-3 " >
-                                <Form.Control
-                                    type="text"
-                                    name="From"
-                                    placeholder="From (City)"
-                                // className={errors.name ? "is-invalid" : ""}
-                                />
-                            </Form.Group>
+                          {city}
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  </div>
+                )}
+              </div>
 
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    type="text"
-                                    placeholder="To (City)"
-                                // className={errors.name ? "is-invalid" : ""}
-                                />
-                                {/* {errors.password && (
-                                    <p className="text-danger">{errors.password.message}</p>
-                                )} */}
-                            </Form.Group>
-                            <Form.Group className="mb-3 " >
-                                <Form.Control
-                                    type="date"
-                                    name="From"
-                                    placeholder="From (City)"
-                                // className={errors.name ? "is-invalid" : ""}
-                                />
-                            </Form.Group>
-                            <Button className="mb-3" type="submit" variant="success">
-                                Search
-                            </Button>
-                        </Form>
-                    </Card.Body>
-                </Card>
-            </Col>
-        </Row>
-        // </Container>
-        // <Card className="w-full max-w-4xl bg-white">
-        //     <CardBody className="p-6">
-        //         {/* Navigation Tabs */}
-        //         <div className="flex gap-4 mb-6">
-        //             <Button
-        //                 variant="ghost"
-        //                 className="flex items-center gap-2 hover:bg-blue-50"
-        //             >
+              <div className="position-relative w-100 w-md-auto">
+                <Form.Group className="mb-3 w-100">
+                  <div className="input-group">
+                    <Form.Control
+                      type="text"
+                      name="to"
+                      placeholder="To (City)"
+                      value={formData.to}
+                      onChange={handleChange}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSuggestions((prev) => ({
+                          ...prev,
+                          to: true,
+                        }));
+                      }}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleChevronClick("to");
+                      }}
+                    >
+                      <ExpandMore className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </Form.Group>
+                {showSuggestions.to && suggestions.to.length > 0 && (
+                  <div
+                    style={dropdownStyles}
+                    className="position-absolute w-100 z-50"
+                  >
+                    <ListGroup variant="flush">
+                      {suggestions.to.map((city, index) => (
+                        <ListGroup.Item
+                          key={index}
+                          action
+                          onClick={() => handleSuggestionClick(city, "to")}
+                          className="cursor-pointer"
+                        >
+                          {city}
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  </div>
+                )}
+              </div>
 
-        //                 <span className="text-[#0051a0]">Flights</span>
-        //             </Button>
+              <Form.Group className="mb-3 w-100 w-md-auto">
+                <Form.Control
+                  name="date"
+                  type="date"
+                  onChange={handleChange}
+                  value={formData.date}
+                />
+              </Form.Group>
 
-        //             <Button
-        //                 variant="ghost"
-        //                 className="flex items-center gap-2 bg-[#0051a0] hover:bg-[#004590]"
-        //             >
-
-        //                 <span className="text-white">Buses</span>
-        //             </Button>
-
-        //             <Button
-        //                 variant="ghost"
-        //                 className="flex items-center gap-2 hover:bg-blue-50"
-        //             >
-
-        //                 <span className="text-[#0051a0]">Visas</span>
-        //             </Button>
-
-        //             <Button
-        //                 variant="ghost"
-        //                 className="flex items-center gap-2 hover:bg-blue-50"
-        //             >
-
-        //                 <span className="text-[#0051a0]">Packages</span>
-        //             </Button>
-        //         </div>
-
-        //         {/* Search Form */}
-        //         <div className="grid grid-cols-1 md:grid-cols-8 gap-4 items-center">
-        //             {/* Leaving From */}
-        //             <div className="relative md:col-span-3">
-
-        //                 <Input
-        //                     type="text"
-        //                     placeholder="Leaving From"
-        //                     className="pl-10 border-gray-200"
-        //                 />
-        //             </div>
-
-        //             {/* Swap Button */}
-        //             <div className="flex justify-center md:col-span-1">
-        //                 <Button
-        //                     variant="ghost"
-        //                     size="icon"
-        //                     className="rounded-full hover:bg-gray-100"
-        //                 >
-
-        //                 </Button>
-        //             </div>
-
-        //             {/* Going To */}
-        //             <div className="relative md:col-span-3">
-
-        //                 <Input
-        //                     type="text"
-        //                     placeholder="Going To"
-        //                     className="pl-10 border-gray-200"
-        //                 />
-        //             </div>
-
-        //             {/* Date */}
-        //             <div className="relative md:col-span-1">
-
-        //                 <Input
-        //                     type="text"
-        //                     placeholder="25 Dec, 2024"
-        //                     className="pl-10 border-gray-200"
-        //                 />
-        //             </div>
-        //         </div>
-        //         <Button
-        //             className="w-full mt-4 bg-[#0051a0] hover:bg-[#004590] text-white"
-        //         >
-        //             Search Buses
-        //         </Button>
-        //     </CardBody>
-        // </Card>
-    );
+              <Button
+                className="mb-3 w-100 w-md-auto"
+                type="submit"
+                variant="success"
+              >
+                Search
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  );
 };
 
 export default TravelSearchForm;

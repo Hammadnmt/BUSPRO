@@ -20,11 +20,14 @@ function Navigation() {
   return (
     <div className="">
       <Navbar bg="dark" data-bs-theme="dark" className="">
-        <Nav >
+        <Nav>
           <Nav.Link href="/admin/dashboard" className="text-decoration-none">
             Dashboard
           </Nav.Link>
           <Nav.Link href="/admin/user">Users</Nav.Link>
+          <Nav.Link href="/admin/bus">Buses</Nav.Link>
+          <Nav.Link href="/admin/route">Routes</Nav.Link>
+          <Nav.Link href="/admin/trip">Trips</Nav.Link>
           <Nav.Link href="/admin/booking">Bookings</Nav.Link>
         </Nav>
 

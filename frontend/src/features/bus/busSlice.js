@@ -20,6 +20,14 @@ const bookApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    getBusById: builder.query({
+      query: (id) => ({
+        url: `/bus/${id}`,
+        method: "GET",
+      }),
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
     deleteBus: builder.mutation({
       query: (id) => ({
         url: `/bus/:${id}`,
@@ -45,4 +53,5 @@ export const {
   useGetBusesQuery,
   useDeleteBusMutation,
   useUpdateBusMutation,
+  useGetBusByIdQuery,
 } = bookApi;

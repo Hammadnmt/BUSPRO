@@ -23,7 +23,7 @@ function Booking() {
   console.log(data);
 
   const transformedData = data?.map((entry) => ({
-    user_name: entry.user ? entry.user.name : "N/A",
+    user_name: entry.user ? entry?.user?.name : "N/A",
     bus_no: entry.trip?.Bus?.bus_no || "N/A", // Accessing bus_no from Bus model
     route: `${entry.trip?.Route?.source || "N/A"} - ${entry.trip?.Route?.destination || "N/A"}`, // Source and destination from Route model
     travel_date: entry.trip?.travel_date,
