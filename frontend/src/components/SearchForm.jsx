@@ -4,6 +4,7 @@ import { Row, Button, Col, Form, Card, ListGroup } from "react-bootstrap";
 import { ExpandMore } from "@mui/icons-material";
 import { useLazyGetTripByRouteQuery } from "../features/trip/tripSlice";
 import { useGetAllroutesQuery } from "../features/route/routeSlice";
+import Trip from "./Trip";
 import { getCurrentDate } from "../utils/getCurrenDate";
 import { validateForm } from "../utils/validateSearchForm";
 
@@ -17,7 +18,6 @@ const TravelSearchForm = () => {
   const { data: routeData } = useGetAllroutesQuery();
   const [triggerQuery, { data, isLoading, isSuccess, isError }] =
     useLazyGetTripByRouteQuery();
-  console.log(routeData);
 
   const [suggestions, setSuggestions] = useState({
     from: [],
@@ -42,14 +42,25 @@ const TravelSearchForm = () => {
       .filter((route) => route.source === source)
       .map((route) => route.destination);
   };
-
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
 
+    // If the field is "date", convert the value to ISO format
+    if (name === "date") {
+      // Convert the value (yyyy-mm-dd format) to ISO string
+      const isoDate = new Date(value).toISOString(); // Convert to ISO string
+      setFormData((prev) => ({
+        ...prev,
+        [name]: isoDate, // Store the ISO formatted date
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value, // For other fields, store the value as it is
+      }));
+    }
+
+    // Handle "from" input field
     if (name === "from") {
       const sourceSuggestions = getSourceCities().filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
@@ -62,7 +73,9 @@ const TravelSearchForm = () => {
         ...prev,
         from: true,
       }));
-    } else if (name === "to" && formData.from) {
+    }
+    // Handle "to" input field (only if "from" is already selected)
+    else if (name === "to" && formData.from) {
       const destSuggestions = getDestinations(formData.from).filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
       );
@@ -137,9 +150,9 @@ const TravelSearchForm = () => {
         from: formData.from,
         date: formData.date,
       });
-      console.log(data);
     }
   };
+  const handleSearch = (formData) => {};
 
   const dropdownStyles = {
     maxHeight: "200px",
@@ -148,137 +161,150 @@ const TravelSearchForm = () => {
     borderRadius: "0.375rem",
     boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
     backgroundColor: "white",
+    zIndex: "999999",
   };
 
   return (
-    <Row>
-      <Col>
-        <Card>
-          <Card.Body>
-            <h3 className="text-center mb-4">Book Your Ticket Here</h3>
-            <Form
-              onSubmit={onSubmit}
-              className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
-            >
-              <div className="position-relative w-100 w-md-auto">
-                <Form.Group className="mb-3 w-100">
-                  <div className="input-group">
-                    <Form.Control
-                      type="text"
-                      name="from"
-                      value={formData.from}
-                      placeholder="From (City)"
-                      onChange={handleChange}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowSuggestions((prev) => ({
-                          ...prev,
-                          from: true,
-                        }));
-                      }}
-                    />
-                    <Button
-                      variant="outline-secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChevronClick("from");
-                      }}
-                    >
-                      <ExpandMore className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </Form.Group>
-                {showSuggestions.from && suggestions.from.length > 0 && (
-                  <div
-                    style={dropdownStyles}
-                    className="position-absolute w-100 z-50"
-                  >
-                    <ListGroup variant="flush">
-                      {suggestions.from.map((city, index) => (
-                        <ListGroup.Item
-                          key={index}
-                          action
-                          onClick={() => handleSuggestionClick(city, "from")}
-                          className="cursor-pointer"
+    <>
+      <div>
+        <Row>
+          <Col>
+            <Card>
+              <Card.Body>
+                <h3 className="text-center mb-4">Book Your Ticket Here</h3>
+                <Form
+                  onSubmit={onSubmit}
+                  className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
+                >
+                  <div className="position-relative w-100 w-md-auto">
+                    <Form.Group className="mb-3 w-100">
+                      <div className="input-group">
+                        <Form.Control
+                          type="text"
+                          name="from"
+                          value={formData.from}
+                          placeholder="From (City)"
+                          onChange={handleChange}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSuggestions((prev) => ({
+                              ...prev,
+                              from: true,
+                            }));
+                          }}
+                        />
+                        <Button
+                          variant="outline-secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleChevronClick("from");
+                          }}
                         >
-                          {city}
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
+                          <ExpandMore className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </Form.Group>
+                    {showSuggestions.from && suggestions.from.length > 0 && (
+                      <div
+                        style={dropdownStyles}
+                        className="position-absolute w-100 z-50"
+                      >
+                        <ListGroup variant="flush">
+                          {suggestions.from.map((city, index) => (
+                            <ListGroup.Item
+                              key={index}
+                              action
+                              onClick={() =>
+                                handleSuggestionClick(city, "from")
+                              }
+                              className="cursor-pointer"
+                            >
+                              {city}
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <div className="position-relative w-100 w-md-auto">
-                <Form.Group className="mb-3 w-100">
-                  <div className="input-group">
-                    <Form.Control
-                      type="text"
-                      name="to"
-                      placeholder="To (City)"
-                      value={formData.to}
-                      onChange={handleChange}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowSuggestions((prev) => ({
-                          ...prev,
-                          to: true,
-                        }));
-                      }}
-                    />
-                    <Button
-                      variant="outline-secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChevronClick("to");
-                      }}
-                    >
-                      <ExpandMore className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </Form.Group>
-                {showSuggestions.to && suggestions.to.length > 0 && (
-                  <div
-                    style={dropdownStyles}
-                    className="position-absolute w-100 z-50"
-                  >
-                    <ListGroup variant="flush">
-                      {suggestions.to.map((city, index) => (
-                        <ListGroup.Item
-                          key={index}
-                          action
-                          onClick={() => handleSuggestionClick(city, "to")}
-                          className="cursor-pointer"
+                  <div className="position-relative w-100 w-md-auto">
+                    <Form.Group className="mb-3 w-100">
+                      <div className="input-group">
+                        <Form.Control
+                          type="text"
+                          name="to"
+                          placeholder="To (City)"
+                          value={formData.to}
+                          onChange={handleChange}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowSuggestions((prev) => ({
+                              ...prev,
+                              to: true,
+                            }));
+                          }}
+                        />
+                        <Button
+                          variant="outline-secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleChevronClick("to");
+                          }}
                         >
-                          {city}
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
+                          <ExpandMore className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </Form.Group>
+                    {showSuggestions.to && suggestions.to.length > 0 && (
+                      <div
+                        style={dropdownStyles}
+                        className="position-absolute w-100 z-50"
+                      >
+                        <ListGroup variant="flush">
+                          {suggestions.to.map((city, index) => (
+                            <ListGroup.Item
+                              key={index}
+                              action
+                              onClick={() => handleSuggestionClick(city, "to")}
+                              className="cursor-pointer"
+                            >
+                              {city}
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <Form.Group className="mb-3 w-100 w-md-auto">
-                <Form.Control
-                  name="date"
-                  type="date"
-                  onChange={handleChange}
-                  value={formData.date}
-                />
-              </Form.Group>
+                  <Form.Group className="mb-3 w-100 w-md-auto">
+                    <Form.Control
+                      name="date"
+                      type="date"
+                      onChange={handleChange}
+                      value={formData.date}
+                    />
+                  </Form.Group>
 
-              <Button
-                className="mb-3 w-100 w-md-auto"
-                type="submit"
-                variant="success"
-              >
-                Search
-              </Button>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+                  <Button
+                    onClick={() => handleSearch(formData)}
+                    className="mb-3 w-100 w-md-auto"
+                    type="submit"
+                    variant="success"
+                  >
+                    Search
+                  </Button>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+        <div className="d-flex flex-column justify-content-center align-items-center p-4">
+          {data?.map((trip) => (
+            <Trip data={trip} key={trip._id} />
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 

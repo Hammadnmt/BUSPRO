@@ -1,13 +1,10 @@
-import React from "react";
 import TravelSearchForm from "../components/SearchForm";
-import Trip from "../components/Trip";
 
 function Home() {
   return (
-    <>
+    <div className="mx-auto">
       <TravelSearchForm />
-      <Trip />
-    </>
+    </div>
   );
 }
 

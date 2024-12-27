@@ -1,10 +1,5 @@
 import { Card, Button, Row, Col, Badge } from "react-bootstrap";
-import { useGetTripsQuery } from "../features/trip/tripSlice.js";
-const BusTicketCard = () => {
-  const { data } = useGetTripsQuery();
-  console.log(data)
-
-  const departure_time = 123;
+const Trip = ({ data }) => {
   return (
     <Card className="shadow-sm mb-3 w-50">
       <Card.Body>
@@ -12,28 +7,28 @@ const BusTicketCard = () => {
           <Col md={8}>
             <div className="d-flex align-items-center mb-2">
               {/* <img src="" alt="Daewoo" className="me-2" /> */}
-              <span className="text-muted">Daewoo</span>
+              <span className="text-muted">{data?.Route?.arrival_time}</span>
             </div>
 
             <div className="d-flex justify-content-between mb-3">
               <div>
-                <h5 className="mb-1">
-                  Hello- {departure_time}
-                </h5>
+                <h5 className="mb-1">Daweo</h5>
                 <div className="text-muted">
-                  <span>Lahore (لاہور)</span>
+                  <span>{data?.departure_time} </span>
                   <span className="mx-2">-</span>
-                  <span> Rawalpindi / Islamabad (اسلام آباد)</span>
+                  <span>{data?.arrival_time}</span>
+                </div>
+                <div className="text-muted">
+                  <span>{data?.Route?.source} </span>
+                  <span className="mx-2">-</span>
+                  <span>{data?.Route?.destination}</span>
                 </div>
               </div>
             </div>
 
             <div className="mb-3">
               <div className="text-primary mb-1">Kalma Chowk</div>
-              <small className="text-muted">
-                Daewoo Terminal Rawalpindi, Jhangi Sayyedan, Near EME College,
-                No 26 Chungi Peshawar Road
-              </small>
+              <small className="text-muted">{data?.description}</small>
             </div>
 
             <div className="d-flex align-items-center">
@@ -47,7 +42,7 @@ const BusTicketCard = () => {
           </Col>
 
           <Col md={4} className="text-end">
-            <h4 className="mb-3">PKR 2,700</h4>
+            <h4 className="mb-3">PKR {data?.Route?.fare}</h4>
             <Button variant="primary">Check Seats</Button>
           </Col>
         </Row>
@@ -56,4 +51,4 @@ const BusTicketCard = () => {
   );
 };
 
-export default BusTicketCard;
+export default Trip;

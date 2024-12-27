@@ -19,6 +19,7 @@ const getTrips = async (req, res, next) => {
 const getTripByRoute = async (req, res, next) => {
   try {
     const { to, from, date } = req.query;
+    console.log(date);
     const [routedata] = await Route.find({ source: from, destination: to });
     if (routedata.length == 0) {
       throw new Error("No Route Exists for this Origin and Destination");
@@ -28,9 +29,13 @@ const getTripByRoute = async (req, res, next) => {
     // });
     // const id = routedata._id;
     // console.log(routedata);
-    const tripdata = await Trip.find({ Route: routedata._id })
+    const tripdata = await Trip.find({
+      Route: routedata._id,
+      travel_date: date,
+    })
       .populate("Bus")
       .populate("Route");
+    // console.log(tripdata);
     if (!tripdata) {
       throw new Error("No Trip Exists");
     }
