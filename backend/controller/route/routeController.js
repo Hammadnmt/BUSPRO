@@ -38,6 +38,20 @@ const getOneRoute = async (req, res, next) => {
   }
 };
 
+const createRoute = async (req, res, next) => {
+  try {
+    const routedata = await Route.create(req.body);
+    if (!routedata) {
+      throw new Error("Unable to create route");
+    }
+    res.status(200).json({
+      status: true,
+      message: "Route created Successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 //update Routes
 const updateRoute = async (req, res, next) => {
   try {
@@ -78,6 +92,7 @@ const deleteRoute = async (req, res, next) => {
 // exports
 module.exports = {
   getAllRoutes,
+  createRoute,
   getOneRoute,
   updateRoute,
   deleteRoute,

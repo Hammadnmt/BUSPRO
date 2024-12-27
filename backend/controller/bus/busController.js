@@ -58,7 +58,7 @@ const updateBus = async (req, res, next) => {
 
 const getBus = async (req, res, next) => {
   try {
-    const bus = await Bus.findOne(req.params.id);
+    const bus = await Bus.findById(req.params.id);
     if (!bus) {
       throw new Error("No Bus Found");
     }

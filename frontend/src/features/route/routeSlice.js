@@ -11,6 +11,15 @@ export const routeApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    createRoute: builder.mutation({
+      query: (data) => ({
+        url: "/route/create/",
+        method: "POST",
+        body: data,
+      }),
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
     deleteRoute: builder.mutation({
       query: (id) => ({
         url: `/route/${id}`,
@@ -41,6 +50,7 @@ export const routeApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllroutesQuery,
+  useCreateRouteMutation,
   useGetRouteByIdQuery,
   useDeleteRouteMutation,
   useUpdateRouteMutation,

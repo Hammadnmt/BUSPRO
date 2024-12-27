@@ -3,9 +3,7 @@ const Route = require("../../model/Route/routeModel");
 
 const getTrips = async (req, res, next) => {
   try {
-    const trips = await Trip.find({ Route: "676bba28662fd56b349503f3" })
-      .populate("Route")
-      .populate("Bus");
+    const trips = await Trip.find().populate("Route").populate("Bus");
     if (!trips) {
       throw new Error("Trips not found");
     }
@@ -75,10 +73,18 @@ const getTrip = async (req, res) => {
   }
 };
 
-const createTrip = async (req, res) => {
+const createTrip = async (req, res, next) => {
   try {
-    const trips = await Trip.find();
-    res.json(trips);
+    const { busId, routeId, travel_date, status } = req.body;
+    // const routedata = await Route.findById({ _id: routeId });
+    const tripdata = await Trip.create(req.body);
+    if (!tripdata) {
+      throw new Error("Unable to create Trip");
+    }
+    res.status(200).json({
+      status: true,
+      message: "Trip created Successfully",
+    });
   } catch (error) {
     next(error);
   }

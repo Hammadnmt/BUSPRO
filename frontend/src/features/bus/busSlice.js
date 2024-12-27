@@ -38,7 +38,7 @@ const bookApi = baseApi.injectEndpoints({
     }),
     updateBus: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/bus/:${id}`,
+        url: `/bus/${id}`,
         method: "PATCH",
         body: data,
       }),

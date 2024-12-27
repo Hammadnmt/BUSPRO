@@ -1,30 +1,59 @@
-import { Container, Row } from "react-bootstrap";
+import { Card, Button, Row, Col, Badge } from "react-bootstrap";
 import { useGetTripsQuery } from "../features/trip/tripSlice.js";
-export default function Trip() {
-  const { data, isLoading, isSuccess } = useGetTripsQuery();
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  console.log(data[0]);
+const BusTicketCard = () => {
+  const { data } = useGetTripsQuery();
+  console.log(data)
+
+  const departure_time = 123;
   return (
-    <Container>
-      <Row>
-        <div className="d-flex  ">
-          <div className="w-50">
-            <div className="border border-2 ">
-              <h1></h1>
-              <p>
-                {data[0].Route.source}--{data[0].Route.destination}
-              </p>
-              <small>location: Thokar Niaz Baig</small>
+    <Card className="shadow-sm mb-3 w-50">
+      <Card.Body>
+        <Row className="align-items-center">
+          <Col md={8}>
+            <div className="d-flex align-items-center mb-2">
+              {/* <img src="" alt="Daewoo" className="me-2" /> */}
+              <span className="text-muted">Daewoo</span>
             </div>
-          </div>
-          <div className="p-3 px-2 flex-shrink-1 border border-2 ">
-            <p>Rs: 999</p>
-            <button className="">Book Now</button>
-          </div>
-        </div>
-      </Row>
-    </Container>
+
+            <div className="d-flex justify-content-between mb-3">
+              <div>
+                <h5 className="mb-1">
+                  Hello- {departure_time}
+                </h5>
+                <div className="text-muted">
+                  <span>Lahore (لاہور)</span>
+                  <span className="mx-2">-</span>
+                  <span> Rawalpindi / Islamabad (اسلام آباد)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <div className="text-primary mb-1">Kalma Chowk</div>
+              <small className="text-muted">
+                Daewoo Terminal Rawalpindi, Jhangi Sayyedan, Near EME College,
+                No 26 Chungi Peshawar Road
+              </small>
+            </div>
+
+            <div className="d-flex align-items-center">
+              {/* <Headphones size={16} className="me-2 text-muted" /> */}
+              {/* <Settings size={16} className="me-2 text-muted" /> */}
+              <Badge bg="warning" className="me-2">
+                Luxury
+              </Badge>
+              <Badge bg="success">Refundable</Badge>
+            </div>
+          </Col>
+
+          <Col md={4} className="text-end">
+            <h4 className="mb-3">PKR 2,700</h4>
+            <Button variant="primary">Check Seats</Button>
+          </Col>
+        </Row>
+      </Card.Body>
+    </Card>
   );
-}
+};
+
+export default BusTicketCard;

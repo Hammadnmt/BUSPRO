@@ -7,7 +7,7 @@ import {
 
 function Booking() {
   const { data, isLoading, isFetching } = useGetTripsQuery();
-  const [deleteBooking] = useDeleteTripMutation();
+  const [deleteTrip] = useDeleteTripMutation();
   const navigate = useNavigate();
   const columns = [
     { header: "Bus number", key: "bus_no" },
@@ -15,30 +15,30 @@ function Booking() {
     { header: "Destination", key: "destination" },
     { header: "Departure", key: "departure_time" },
     { header: "Arrival", key: "arrival_time" },
+    { header: "Date", key: "travel_date" },
     { header: "Status", key: "status" },
   ];
 
-  //   console.log(data);
+    console.log(data);
 
   const transformedData = data?.map((entry) => ({
-    bus_no: entry.Bus?.bus_no || "N/A", // Accessing bus_no from Bus model
+    bus_no: entry.Bus?.bus_no || "N/A",
     source: entry.Route?.source || "N/A",
     destination: entry.Route?.destination || "N/A",
-    travel_date: entry.travel_date || "N/A",
-    departure_time: entry.departure_time || "N/A",
-    arrival_time: entry.arrival_time || "N/A",
-    status: entry.status || "N/A", // Status from Trip model
+    travel_date: entry.travel_date.split("T")[0] || "N/A",
+    departure_time: entry.departure_time.split("T")[1] || "N/A",
+    arrival_time: entry.arrival_time.split("T")[1] || "N/A",
+    status: entry.status || "N/A",
   }));
-  // console.log(transformedData);
   const handleAdd = () => {
     navigate("/admin/trip/create");
   };
   const handleEdit = (id) => {
-    navigate(`/admin/booking/${id}`);
+    navigate(`/admin/trip/${id}`);
   };
 
   const handleDelete = async (id) => {
-    await deleteBooking(id).unwrap();
+    await deleteTrip(id).unwrap();
   };
   return (
     <div className="container-fluid d-flex flex-column justify-content-center align-items-center ">

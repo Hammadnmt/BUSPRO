@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getAllRoutes,
+  createRoute,
   getOneRoute,
   updateRoute,
   deleteRoute,
@@ -12,8 +13,11 @@ const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
 router.route("/").get(getAllRoutes);
-router.route("/:id").get(authMiddleware, roleMiddleware, getOneRoute);
-router.route("/:id").put(authMiddleware, roleMiddleware, updateRoute);
-router.route("/:id").delete(authMiddleware, roleMiddleware, deleteRoute);
+router.route("/create").post(authMiddleware, roleMiddleware, createRoute);
+router
+  .route("/:id")
+  .get(authMiddleware, roleMiddleware, getOneRoute)
+  .put(authMiddleware, roleMiddleware, updateRoute)
+  .delete(authMiddleware, roleMiddleware, deleteRoute);
 
 module.exports = router;

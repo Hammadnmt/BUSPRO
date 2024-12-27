@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 const UpdateBus = () => {
   const { id } = useParams();
-  console.log(id)
+  // console.log(id);
   const navigate = useNavigate();
   const {
     register,
@@ -23,11 +23,11 @@ const UpdateBus = () => {
 
   const { data, isLoading: loading } = useGetBusByIdQuery(id);
   const [updateBus, { isLoading, error, isSuccess }] = useUpdateBusMutation();
-  console.log(data)
+  console.log(data);
   useEffect(() => {
     if (data) {
       setValue("busNumber", data.bus_no);
-      setValue("totalSeats", data.total_seats);
+      setValue("seats", data.total_seats);
     }
 
     if (isSuccess) {
@@ -74,24 +74,26 @@ const UpdateBus = () => {
                     className={errors.busNumber ? "is-invalid" : ""}
                   />
                   {errors.busNumber && (
-                    <small className="text-danger">{errors.name.message}</small>
+                    <small className="text-danger">
+                      {errors.busNumber.message}
+                    </small>
                   )}
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Control
                     type="number"
                     placeholder="Total Seats"
-                    {...register("email", {
+                    {...register("seats", {
                       required: "Total seats is required",
                       pattern: {
                         value: /^[0-9]+$/,
                       },
                     })}
-                    className={errors.name ? "is-invalid" : ""}
+                    className={errors.seats ? "is-invalid" : ""}
                   />
                   {errors.totalSeats && (
                     <small className="text-danger">
-                      {errors.totalSeats.message}
+                      {errors.seats.message}
                     </small>
                   )}
                 </Form.Group>

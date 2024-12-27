@@ -22,7 +22,7 @@ function RoutePage() {
   ];
 
   const handleAdd = () => {
-    navigate("/admin/trip/create");
+    navigate("/admin/route/create");
   };
 
   const handleEdit = (id) => {
