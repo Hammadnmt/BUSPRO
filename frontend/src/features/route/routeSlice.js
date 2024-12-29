@@ -8,6 +8,7 @@ export const routeApi = baseApi.injectEndpoints({
         url: "/route/",
         method: "GET",
       }),
+      providesTags: ["Route"], // Provide "Route" cache for all routes
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -17,6 +18,7 @@ export const routeApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Route"], // Invalidate "Route" cache after creating a route
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -25,6 +27,7 @@ export const routeApi = baseApi.injectEndpoints({
         url: `/route/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Route"],
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -33,6 +36,7 @@ export const routeApi = baseApi.injectEndpoints({
         url: `/route/${id}`,
         method: "GET",
       }),
+      invalidatesTags: ["Route"],
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -42,6 +46,7 @@ export const routeApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
+      invalidatesTags: ["Route"], // Invalidate cache for specific route ID
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),

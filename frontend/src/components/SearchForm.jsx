@@ -45,20 +45,10 @@ const TravelSearchForm = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    // If the field is "date", convert the value to ISO format
-    if (name === "date") {
-      // Convert the value (yyyy-mm-dd format) to ISO string
-      const isoDate = new Date(value).toISOString(); // Convert to ISO string
-      setFormData((prev) => ({
-        ...prev,
-        [name]: isoDate, // Store the ISO formatted date
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value, // For other fields, store the value as it is
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value, // For other fields, store the value as it is
+    }))
 
     // Handle "from" input field
     if (name === "from") {
@@ -152,7 +142,7 @@ const TravelSearchForm = () => {
       });
     }
   };
-  const handleSearch = (formData) => {};
+  const handleSearch = (formData) => { };
 
   const dropdownStyles = {
     maxHeight: "200px",

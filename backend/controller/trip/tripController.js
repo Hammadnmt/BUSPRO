@@ -19,6 +19,7 @@ const getTrips = async (req, res, next) => {
 const getTripByRoute = async (req, res, next) => {
   try {
     const { to, from, date } = req.query;
+    console.log(date)
     console.log(date);
     const [routedata] = await Route.find({ source: from, destination: to });
     if (routedata.length == 0) {
@@ -63,9 +64,9 @@ const getTripsBydate = async (req, res, next) => {
   }
 };
 
-const getTrip = async (req, res) => {
+const getTrip = async (req, res, next) => {
   try {
-    const trip = await Trip.findById(req.params.id);
+    const trip = await Trip.findById(req.params.id).populate("Bus").populate("Route");
     if (!trip) {
       throw new Error("Trip not found");
     }
@@ -95,8 +96,9 @@ const createTrip = async (req, res, next) => {
   }
 };
 
-const deleteTrip = async (req, res) => {
+const deleteTrip = async (req, res, next) => {
   try {
+    console.log(req.params.id)
     const trip = await Trip.findByIdAndDelete(req.params.id);
     if (!trip) {
       throw new Error("Trip not found");
@@ -109,9 +111,14 @@ const deleteTrip = async (req, res) => {
     next(error);
   }
 };
-const updateTrip = async (req, res) => {
+const updateTrip = async (req, res, next) => {
   try {
-    const trip = await Trip.findByIdAndUpdate(req.params.id);
+    // console.log(req.params.id)
+    console.log(req.body)
+    const trip = await Trip.findByIdAndUpdate(req.params.id,
+      req.body,
+      { new: true }
+    );
     if (!trip) {
       throw new Error("Trip not found");
     }

@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { useCreateTripMutation } from "../../features/trip/tripSlice";
+import { useNavigate, useParams } from "react-router";
+import { useGetTripByIdQuery, useUpdateTripMutation } from "../../features/trip/tripSlice";
 import { useGetBusesQuery } from "../../features/bus/busSlice";
 import { useGetAllroutesQuery } from "../../features/route/routeSlice";
-import Loader from "../Loading";
 import { useForm } from "react-hook-form";
 import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
+import Loader from "../Loading";
 
-const CreateTrip = () => {
+const UpdateTrip = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+
   const { data: routedata, isLoading: isLoadingRoutes } =
     useGetAllroutesQuery();
+
   const { data: busdata, isLoading: isLoadingBuses } = useGetBusesQuery();
-  const [createTrip, { isLoading, isSuccess, isError, error }] =
-    useCreateTripMutation();
+  const { data: tripData, isError, error } = useGetTripByIdQuery(id);
+  const [updateTrip, { isLoading, isSuccess }] = useUpdateTripMutation();
   const {
     register,
     handleSubmit,
     setError,
     reset,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -29,12 +33,12 @@ const CreateTrip = () => {
     departure_time: "",
     arrival_time: "",
     description: "",
-    status: "Inactive",
+    status: "",
   });
 
   const onSubmit = async (e) => {
     try {
-      await createTrip(tripDetails).unwrap();
+      await updateTrip({ id, data: tripDetails }).unwrap();
       reset();
     } catch (err) {
       console.log(err);
@@ -48,10 +52,19 @@ const CreateTrip = () => {
 
 
   useEffect(() => {
+    if (tripData) {
+      setValue("Bus", tripData?.Bus?._id);
+      setValue("Route", tripData?.Route?._id);
+      setValue("status", tripData.status);
+      setValue("travel_date", tripData?.travel_date);
+      setValue("description", tripData?.description);
+      setValue("arrival_time", tripData?.Route?.arrival_time);
+      setValue("departure_time", tripData?.Route?.departure_time);
+    }
     if (isSuccess) {
       navigate("/admin/trip");
     }
-  }, [isSuccess, navigate]);
+  }, [isSuccess, navigate, setValue, tripData]);
 
   return isLoading || isLoadingRoutes || isLoadingBuses ? (
     <Loader />
@@ -61,7 +74,7 @@ const CreateTrip = () => {
         <Col>
           <Card className="trip-card mt-2">
             <Card.Body>
-              <h3 className="text-center mb-4">Create Trip</h3>
+              <h3 className="text-center mb-4">Update Trip</h3>
               <Form
                 onSubmit={handleSubmit(onSubmit)}
                 className="d-flex flex-column justify-content-center align-items-center"
@@ -232,7 +245,7 @@ const CreateTrip = () => {
                   </Col>
                 </Row>
                 <Button type="submit" variant="success">
-                  {isLoading ? "Creating..." : "Create Trip"}
+                  {isLoading ? "Updating..." : "Update Trip"}
                 </Button>
                 {isError && (
                   <small className="text-danger mt-3">
@@ -248,4 +261,4 @@ const CreateTrip = () => {
   );
 };
 
-export default CreateTrip;
+export default UpdateTrip;

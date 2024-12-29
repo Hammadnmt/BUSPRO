@@ -5,6 +5,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3000/api",
   credentials: "include",
 });
+
 const baseQueryWithAuth = async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
 
@@ -18,7 +19,7 @@ const baseQueryWithAuth = async (args, api, extraOptions) => {
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithAuth,
-  tagTypes: ["User"],
+  tagTypes: ["User", "Bus", "Route", "Trip"], // Added tags here
   endpoints: () => ({}),
 });
 

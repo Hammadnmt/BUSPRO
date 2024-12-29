@@ -10,6 +10,7 @@ function Booking() {
   const [deleteTrip] = useDeleteTripMutation();
   const navigate = useNavigate();
   const columns = [
+    { header: "ID", key: "_id" },
     { header: "Bus number", key: "bus_no" },
     { header: "Source", key: "source" },
     { header: "Destination", key: "destination" },
@@ -19,9 +20,11 @@ function Booking() {
     { header: "Status", key: "status" },
   ];
 
-    console.log(data);
+  console.log(data);
 
   const transformedData = data?.map((entry) => ({
+    _id: entry._id,
+    ID: entry._id,
     bus_no: entry.Bus?.bus_no || "N/A",
     source: entry.Route?.source || "N/A",
     destination: entry.Route?.destination || "N/A",

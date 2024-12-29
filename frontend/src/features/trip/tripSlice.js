@@ -9,6 +9,7 @@ const tripApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Trip"], // Invalidate "Trip" cache after creating a trip
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -17,6 +18,7 @@ const tripApi = baseApi.injectEndpoints({
         url: "/trip/",
         method: "GET",
       }),
+      providesTags: ["Trip"], // Provide "Trip" cache for trips
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -25,6 +27,7 @@ const tripApi = baseApi.injectEndpoints({
         url: `/trip/${id}`,
         method: "GET",
       }),
+      invalidatesTags: ["Trip"],
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
@@ -33,24 +36,26 @@ const tripApi = baseApi.injectEndpoints({
         url: `/trip/search?to=${to}&from=${from}&date=${date}`,
         method: "GET",
       }),
+      providesTags: ["Trip"], // Provide "Trip" tag for route queries
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
     deleteTrip: builder.mutation({
       query: (id) => ({
-        url: `/trip/:${id}`,
+        url: `/trip/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Trip"],
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.status,
     }),
     updateTrip: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/trip/:${id}`,
+        url: `/trip/${id}`,
         method: "PATCH",
         body: data,
       }),
-      transformResponse: (response, meta, arg) => response.data,
+      invalidatesTags: ["Trip"], transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.status,
     }),
   }),

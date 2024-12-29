@@ -12,7 +12,7 @@ import CreateRoute from "./components/Routes/CreateRoute";
 import UpdateRoute from "./components/Routes/updateRoute";
 import TripPage from "./pages/TripPage";
 import CreateTrip from "./components/Trip/CreateTrip";
-// import UpdateTrip from "./components/Trip/UpdateTrip";
+import UpdateTrip from "./components/Trip/UpdateTrip";
 import Booking from "./pages/Booking";
 import NotFound from "./pages/404";
 import { ToastContainer } from "react-toastify";
@@ -31,7 +31,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/trip"   element={<Trip />} />
+          <Route path="/trip" element={<Trip />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="" element={<ProtectedRoute />}>
@@ -45,11 +45,12 @@ export default function App() {
               <Route path="/admin/route/:id" element={<UpdateRoute />} />
               <Route path="trip" element={<TripPage />} />
               <Route path="/admin/trip/create" element={<CreateTrip />} />
+              <Route path="/admin/trip/:id" element={<UpdateTrip />} />
               <Route path="booking" element={<Booking />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
-        </Routes>
+        </Routes> 
       </BrowserRouter>
     </>
   );
