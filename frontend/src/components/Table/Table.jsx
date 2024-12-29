@@ -8,6 +8,8 @@ import Loader from "../components/Loading";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
+
+
 export default function ReusableTable({
   data = [],
   columns = [],

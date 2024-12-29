@@ -7,6 +7,7 @@ const {
   deleteTrip,
   updateTrip,
   getTripByRoute,
+  getTripsBydate
 } = require("../controller/trip/tripController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -19,6 +20,7 @@ router
   .route("/:id")
   .patch(authMiddleware, roleMiddleware, updateTrip)
   .delete(authMiddleware, roleMiddleware, deleteTrip)
-  .get(getTrip);
+  .get(getTrip)
+  .get(getTripsBydate);
 
 module.exports = router;

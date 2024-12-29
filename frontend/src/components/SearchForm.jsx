@@ -13,7 +13,8 @@ const TravelSearchForm = () => {
   const [formData, setFormData] = useState({
     from: "",
     to: "",
-    date: getCurrentDate(),
+    date: "",
+    isoDate: ""
   });
   const { data: routeData } = useGetAllroutesQuery();
   const [triggerQuery, { data, isLoading, isSuccess, isError }] =
@@ -23,6 +24,7 @@ const TravelSearchForm = () => {
     from: [],
     to: [],
   });
+  console.log(formData.isoDate)
 
   const [showSuggestions, setShowSuggestions] = useState({
     from: false,
@@ -45,10 +47,20 @@ const TravelSearchForm = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value, // For other fields, store the value as it is
-    }))
+    setFormData((prev) => {
+      if (name === "date") {
+        const isoDate = new Date(value).toISOString(); // Convert to ISO string
+        return {
+          ...prev,
+          date: value, // Store raw date for frontend
+          isoDate: isoDate, // Store ISO format for backend
+        };
+      }
+      return {
+        ...prev,
+        [name]: value, // For other fields, store the value as it is
+      };
+    });
 
     // Handle "from" input field
     if (name === "from") {
@@ -73,12 +85,10 @@ const TravelSearchForm = () => {
         ...prev,
         to: destSuggestions,
       }));
-      setShowSuggestions((prev) => ({
-        ...prev,
-        to: true,
-      }));
+      setShowSuggestions((prev) => (prev, { to: true }));
     }
   };
+
 
   const handleChevronClick = (field) => {
     if (field === "from") {
@@ -138,7 +148,7 @@ const TravelSearchForm = () => {
       triggerQuery({
         to: formData.to,
         from: formData.from,
-        date: formData.date,
+        date: formData.isoDate,
       });
     }
   };

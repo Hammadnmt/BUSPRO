@@ -27,7 +27,7 @@ const tripApi = baseApi.injectEndpoints({
         url: `/trip/${id}`,
         method: "GET",
       }),
-      invalidatesTags: ["Trip"],
+      // invalidatesTags: ["Trip"],
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),

@@ -20,8 +20,6 @@ function Booking() {
     { header: "Status", key: "status" },
   ];
 
-  console.log(data);
-
   const transformedData = data?.map((entry) => ({
     _id: entry._id,
     ID: entry._id,
