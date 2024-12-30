@@ -1,27 +1,29 @@
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import ProtectedRoute from "./components/ProtectedRoutes";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 import AdminLayout from "./components/AdminLayout";
-import Dashboard from "./components/Dashboard";
-import Users from "./pages/users";
-import BusPage from "./pages/Buses";
 import CreateBus from "./components/Buses/CreateBus";
 import UpdateBus from "./components/Buses/updateBus";
-import RoutePage from "./pages/routes";
+import ContactForm from "./components/ContactForm";
+import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
+import ProtectedRoute from "./components/ProtectedRoutes";
 import CreateRoute from "./components/Routes/CreateRoute";
 import UpdateRoute from "./components/Routes/updateRoute";
-import TripPage from "./pages/TripPage";
+import Signup from "./components/Signup";
+import Trip from "./components/Trip";
 import CreateTrip from "./components/Trip/CreateTrip";
 import UpdateTrip from "./components/Trip/UpdateTrip";
-import Booking from "./pages/Booking";
 import NotFound from "./pages/404";
-import { ToastContainer } from "react-toastify";
-import { Routes, Route, BrowserRouter } from "react-router";
-import "react-toastify/dist/ReactToastify.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Trip from "./components/Trip";
+import Booking from "./pages/Booking";
+import BusPage from "./pages/Buses";
 import Home from "./pages/Home";
-import "./App.css";
+import UserProfile from "./pages/UserProfile";
+import RoutePage from "./pages/routes";
+import TripPage from "./pages/TripPage";
+import Users from "./pages/users";
 
 export default function App() {
   return (
@@ -31,10 +33,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route index path="home" element={<Home />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/trip" element={<Trip />} />
-          <Route path="/Home" element={<Home />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="" element={<ProtectedRoute />}>
+          <Route path="/book" element={<ContactForm />} />
+          <Route path="" element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
               <Route index path="dashboard" element={<Dashboard />} />
               <Route path="user" element={<Users />} />
               <Route path="bus" element={<BusPage />} />
@@ -50,7 +54,7 @@ export default function App() {
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
-        </Routes> 
+        </Routes>
       </BrowserRouter>
     </>
   );

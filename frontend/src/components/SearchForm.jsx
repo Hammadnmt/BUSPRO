@@ -1,35 +1,46 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Row, Button, Col, Form, Card, ListGroup } from "react-bootstrap";
+import { Row, Button, Col, Card, ListGroup } from "react-bootstrap";
 import { ExpandMore } from "@mui/icons-material";
 import { useLazyGetTripByRouteQuery } from "../features/trip/tripSlice";
 import { useGetAllroutesQuery } from "../features/route/routeSlice";
 import Trip from "./Trip";
 import { getCurrentDate } from "../utils/getCurrenDate";
-import { validateForm } from "../utils/validateSearchForm";
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// This functionality is working as Desired
 const TravelSearchForm = () => {
-  const [formData, setFormData] = useState({
-    from: "",
-    to: "",
-    date: "",
-    isoDate: ""
-  });
   const { data: routeData } = useGetAllroutesQuery();
-  const [triggerQuery, { data, isLoading, isSuccess, isError }] =
+  const [triggerQuery, { data, isLoading, isError, error }] =
     useLazyGetTripByRouteQuery();
+  console.log(error)
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      from: "",
+      to: "",
+      date: getCurrentDate(),
+    },
+  });
 
   const [suggestions, setSuggestions] = useState({
     from: [],
     to: [],
   });
-  console.log(formData.isoDate)
 
   const [showSuggestions, setShowSuggestions] = useState({
     from: false,
     to: false,
   });
+
+  const watchFrom = watch("from");
 
   // Get unique source cities
   const getSourceCities = () => {
@@ -44,26 +55,11 @@ const TravelSearchForm = () => {
       .filter((route) => route.source === source)
       .map((route) => route.destination);
   };
-  const handleChange = (event) => {
-    const { name, value } = event.target;
 
-    setFormData((prev) => {
-      if (name === "date") {
-        const isoDate = new Date(value).toISOString(); // Convert to ISO string
-        return {
-          ...prev,
-          date: value, // Store raw date for frontend
-          isoDate: isoDate, // Store ISO format for backend
-        };
-      }
-      return {
-        ...prev,
-        [name]: value, // For other fields, store the value as it is
-      };
-    });
+  const handleInputChange = (field, value) => {
+    setValue(field, value);
 
-    // Handle "from" input field
-    if (name === "from") {
+    if (field === "from") {
       const sourceSuggestions = getSourceCities().filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
       );
@@ -75,20 +71,20 @@ const TravelSearchForm = () => {
         ...prev,
         from: true,
       }));
-    }
-    // Handle "to" input field (only if "from" is already selected)
-    else if (name === "to" && formData.from) {
-      const destSuggestions = getDestinations(formData.from).filter((city) =>
+    } else if (field === "to" && watchFrom) {
+      const destSuggestions = getDestinations(watchFrom).filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
       );
       setSuggestions((prev) => ({
         ...prev,
         to: destSuggestions,
       }));
-      setShowSuggestions((prev) => (prev, { to: true }));
+      setShowSuggestions((prev) => ({
+        ...prev,
+        to: true,
+      }));
     }
   };
-
 
   const handleChevronClick = (field) => {
     if (field === "from") {
@@ -96,10 +92,10 @@ const TravelSearchForm = () => {
         ...prev,
         from: getSourceCities(),
       }));
-    } else if (field === "to" && formData.from) {
+    } else if (field === "to" && watchFrom) {
       setSuggestions((prev) => ({
         ...prev,
-        to: getDestinations(formData.from),
+        to: getDestinations(watchFrom),
       }));
     }
     setShowSuggestions((prev) => ({
@@ -109,25 +105,17 @@ const TravelSearchForm = () => {
   };
 
   const handleSuggestionClick = (value, field) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setValue(field, value);
     setShowSuggestions((prev) => ({
       ...prev,
       [field]: false,
     }));
 
-    // Clear destination if source changes
     if (field === "from") {
-      setFormData((prev) => ({
-        ...prev,
-        to: "",
-      }));
+      setValue("to", "");
     }
   };
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".input-group")) {
@@ -142,17 +130,20 @@ const TravelSearchForm = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm) {
-      triggerQuery({
-        to: formData.to,
-        from: formData.from,
-        date: formData.isoDate,
+  const onSubmit = (formData) => {
+    triggerQuery({
+      to: formData.to,
+      from: formData.from,
+      date: new Date(formData.date).toISOString(),
+    })
+      .unwrap()
+      .then(() => {
+        toast.success("Trips fetched successfully!");
+      })
+      .catch((err) => {
+        toast.error(error.message || "An error occurred.");
       });
-    }
   };
-  const handleSearch = (formData) => { };
 
   const dropdownStyles = {
     maxHeight: "200px",
@@ -172,38 +163,44 @@ const TravelSearchForm = () => {
             <Card>
               <Card.Body>
                 <h3 className="text-center mb-4">Book Your Ticket Here</h3>
-                <Form
-                  onSubmit={onSubmit}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
                   className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
                 >
                   <div className="position-relative w-100 w-md-auto">
-                    <Form.Group className="mb-3 w-100">
-                      <div className="input-group">
-                        <Form.Control
-                          type="text"
-                          name="from"
-                          value={formData.from}
-                          placeholder="From (City)"
-                          onChange={handleChange}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowSuggestions((prev) => ({
-                              ...prev,
-                              from: true,
-                            }));
-                          }}
-                        />
-                        <Button
-                          variant="outline-secondary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleChevronClick("from");
-                          }}
-                        >
-                          <ExpandMore className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </Form.Group>
+                    <div className="input-group">
+                      <Controller
+                        name="from"
+                        control={control}
+                        rules={{ required: "From city is required." }}
+                        render={({ field }) => (
+                          <input
+                            {...field}
+                            type="text"
+                            className={`form-control ${errors.from ? "is-invalid" : ""}`}
+                            placeholder="From (City)"
+                            onChange={(e) => handleInputChange("from", e.target.value)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowSuggestions((prev) => ({
+                                ...prev,
+                                from: true,
+                              }));
+                            }}
+                          />
+                        )}
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleChevronClick("from");
+                        }}
+                      >
+                        <ExpandMore className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {errors.from && <div className="invalid-feedback">{errors.from.message}</div>}
                     {showSuggestions.from && suggestions.from.length > 0 && (
                       <div
                         style={dropdownStyles}
@@ -214,9 +211,7 @@ const TravelSearchForm = () => {
                             <ListGroup.Item
                               key={index}
                               action
-                              onClick={() =>
-                                handleSuggestionClick(city, "from")
-                              }
+                              onClick={() => handleSuggestionClick(city, "from")}
                               className="cursor-pointer"
                             >
                               {city}
@@ -228,33 +223,39 @@ const TravelSearchForm = () => {
                   </div>
 
                   <div className="position-relative w-100 w-md-auto">
-                    <Form.Group className="mb-3 w-100">
-                      <div className="input-group">
-                        <Form.Control
-                          type="text"
-                          name="to"
-                          placeholder="To (City)"
-                          value={formData.to}
-                          onChange={handleChange}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowSuggestions((prev) => ({
-                              ...prev,
-                              to: true,
-                            }));
-                          }}
-                        />
-                        <Button
-                          variant="outline-secondary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleChevronClick("to");
-                          }}
-                        >
-                          <ExpandMore className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </Form.Group>
+                    <div className="input-group">
+                      <Controller
+                        name="to"
+                        control={control}
+                        rules={{ required: "To city is required." }}
+                        render={({ field }) => (
+                          <input
+                            {...field}
+                            type="text"
+                            className={`form-control ${errors.to ? "is-invalid" : ""}`}
+                            placeholder="To (City)"
+                            onChange={(e) => handleInputChange("to", e.target.value)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowSuggestions((prev) => ({
+                                ...prev,
+                                to: true,
+                              }));
+                            }}
+                          />
+                        )}
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleChevronClick("to");
+                        }}
+                      >
+                        <ExpandMore className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {errors.to && <div className="invalid-feedback">{errors.to.message}</div>}
                     {showSuggestions.to && suggestions.to.length > 0 && (
                       <div
                         style={dropdownStyles}
@@ -276,24 +277,28 @@ const TravelSearchForm = () => {
                     )}
                   </div>
 
-                  <Form.Group className="mb-3 w-100 w-md-auto">
-                    <Form.Control
-                      name="date"
-                      type="date"
-                      onChange={handleChange}
-                      value={formData.date}
-                    />
-                  </Form.Group>
+                  <Controller
+                    name="date"
+                    control={control}
+                    rules={{ required: "Date is required." }}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="date"
+                        className={`form-control ${errors.date ? "is-invalid" : ""}`}
+                      />
+                    )}
+                  />
+                  {errors.date && <div className="invalid-feedback">{errors.date.message}</div>}
 
                   <Button
-                    onClick={() => handleSearch(formData)}
                     className="mb-3 w-100 w-md-auto"
                     type="submit"
                     variant="success"
                   >
                     Search
                   </Button>
-                </Form>
+                </form>
               </Card.Body>
             </Card>
           </Col>

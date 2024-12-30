@@ -32,8 +32,7 @@ const Trip = ({ data }) => {
             </div>
 
             <div className="d-flex align-items-center">
-              {/* <Headphones size={16} className="me-2 text-muted" /> */}
-              {/* <Settings size={16} className="me-2 text-muted" /> */}
+
               <Badge bg="warning" className="me-2">
                 Luxury
               </Badge>

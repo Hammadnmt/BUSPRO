@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { useEffect } from "react";
-import { useNavigate, Link } from "react-router";
-import { useRegisterUserMutation } from "../features/auth/authSlice";
-import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
-import Loader from "./Loading";
 import "react-toastify/dist/ReactToastify.css";
+import { useRegisterUserMutation } from "../features/auth/authSlice";
+import BusSeatSelectoration from "./NewComponent"
+import Loader from "./Loading";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -144,6 +145,7 @@ const Signup = () => {
               </Card>
             </Col>
           </Row>
+          <BusSeatSelectoration />
         </Container>
       )}
     </>

@@ -50,7 +50,11 @@ const BookingSchema = new mongoose.Schema(
 
 BookingSchema.post("save", function (error, doc, next) {
   if (error.name === "MongoServerError" && error.code === 11000) {
-    next(new Error("A booking for this user, trip, and travel date already exists."));
+    next(
+      new Error(
+        "A booking for this user, trip, and travel date already exists."
+      )
+    );
   } else {
     next(error);
   }

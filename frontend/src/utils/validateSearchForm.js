@@ -1,14 +1,16 @@
 export function validateForm(formData) {
   const errors = {};
-
+  let flag = true;
   // Validate 'From' field
   if (!formData.from.trim()) {
     errors.from = "Please enter the departure city.";
+    flag = false;
   }
 
   // Validate 'To' field
   if (!formData.to.trim()) {
     errors.to = "Please enter the destination city.";
+    flag = false;
   }
 
   // Validate if 'From' and 'To' are the same
@@ -19,18 +21,12 @@ export function validateForm(formData) {
   ) {
     errors.to =
       "The destination city must be different from the departure city.";
+    flag = false;
   }
-
-  // Validate 'Date' field
-  const selectedDate = new Date(formData.date);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize to the start of the day for comparison
-  if (!formData.date) {
+  if (!formData.isoDate) {
     errors.date = "Please select a travel date.";
-  } else if (selectedDate < today) {
-    errors.date =
-      "Travel date cannot be in the past. Please select a valid date.";
+    flag = false;
   }
 
-  return errors;
+  return flag;
 }

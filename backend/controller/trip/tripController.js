@@ -49,26 +49,12 @@ const getTrips = async (req, res, next) => {
 const getTripByRoute = async (req, res, next) => {
   try {
     const { to, from, date } = req.query;
-    console.log(to, from, date);
-
-    // Validate date
-    if (!date || isNaN(Date.parse(date))) {
-      throw new Error("Invalid date format. Please provide a valid date.");
-    }
-
-    // Find routes matching source and destination
     const routedata = await Route.find({ source: from, destination: to });
-    if (!routedata || routedata.length === 0) {
-      throw new Error("No route exists for this origin and destination.");
-    }
-
-    // Extract route IDs
-    const routeIds = routedata.map(route => route._id);
-
-    // Find trips matching routes and travel date
+    const routeIds = routedata.map((route) => route._id);
     const tripdata = await Trip.find({
-      Route: { $in: routeIds }, // Match any of the route IDs
-      travel_date: { $gte: date }, // Ensure date is valid
+      Route: { $in: routeIds },
+      travel_date: { $gte: date },
+      // status: "active",
     })
       .populate("Bus")
       .populate("Route");
@@ -78,25 +64,23 @@ const getTripByRoute = async (req, res, next) => {
     if (!tripdata || tripdata.length === 0) {
       throw new Error("No trips exist for the given route and date.");
     }
-
-    // Respond with trip data
     res.json({
       status: true,
       data: tripdata,
     });
   } catch (error) {
-    next(error); // Pass error to error-handling middleware
+    next(error);
   }
 };
 
 const getTripsBydate = async (req, res, next) => {
   try {
-    const { date } = req.params
-    const trips = await Trip.find(
-      {
-        travle_date: { $gte: new Date(date) },
-      }
-    ).populate("Route").populate("Bus");
+    const { date } = req.params;
+    const trips = await Trip.find({
+      travle_date: { $gte: new Date(date) },
+    })
+      .populate("Route")
+      .populate("Bus");
     if (!trips) {
       throw new Error("Trips not found");
     }
@@ -111,7 +95,9 @@ const getTripsBydate = async (req, res, next) => {
 
 const getTrip = async (req, res, next) => {
   try {
-    const trip = await Trip.findById(req.params.id).populate("Bus").populate("Route");
+    const trip = await Trip.findById(req.params.id)
+      .populate("Bus")
+      .populate("Route");
     if (!trip) {
       throw new Error("Trip not found");
     }
@@ -149,7 +135,6 @@ const deleteTrip = async (req, res, next) => {
       status: true,
       message: "Trip deleted Successfully",
     });
-
   } catch (error) {
     next(error);
   }
@@ -157,10 +142,9 @@ const deleteTrip = async (req, res, next) => {
 
 const updateTrip = async (req, res, next) => {
   try {
-    const trip = await Trip.findByIdAndUpdate(req.params.id,
-      req.body,
-      { new: true }
-    );
+    const trip = await Trip.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!trip) {
       throw new Error("Trip not found");
     }
@@ -180,6 +164,5 @@ module.exports = {
   deleteTrip,
   updateTrip,
   getTripByRoute,
-  getTripsBydate
+  getTripsBydate,
 };
-
