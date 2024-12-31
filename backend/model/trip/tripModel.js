@@ -17,7 +17,7 @@ const TripSchema = new mongoose.Schema(
       required: [true, "Travel date is required"],
       validate: {
         validator: function (value) {
-          return value >= new Date();
+          return value >= new Date(value);
         },
         message: "Travel date must be today or a future date",
       },

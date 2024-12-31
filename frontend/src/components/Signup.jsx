@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRegisterUserMutation } from "../features/auth/authSlice";
-import BusSeatSelectoration from "./NewComponent"
 import Loader from "./Loading";
 
 const Signup = () => {
@@ -145,7 +144,6 @@ const Signup = () => {
               </Card>
             </Col>
           </Row>
-          <BusSeatSelectoration />
         </Container>
       )}
     </>

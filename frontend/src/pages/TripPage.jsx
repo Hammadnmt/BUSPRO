@@ -10,7 +10,6 @@ function Booking() {
   const [deleteTrip] = useDeleteTripMutation();
   const navigate = useNavigate();
   const columns = [
-    { header: "ID", key: "_id" },
     { header: "Bus number", key: "bus_no" },
     { header: "Source", key: "source" },
     { header: "Destination", key: "destination" },

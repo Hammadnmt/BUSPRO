@@ -1,22 +1,20 @@
+/* eslint-disable react/prop-types */
 import { Card, Button, Row, Col, Badge } from "react-bootstrap";
+import { extractTime12HourFormat } from "../utils/helpers";
+
 const Trip = ({ data }) => {
   return (
     <Card className="shadow-sm mb-3 w-50">
       <Card.Body>
         <Row className="align-items-center">
           <Col md={8}>
-            <div className="d-flex align-items-center mb-2">
-              {/* <img src="" alt="Daewoo" className="me-2" /> */}
-              <span className="text-muted">{data?.Route?.arrival_time}</span>
-            </div>
-
             <div className="d-flex justify-content-between mb-3">
               <div>
                 <h5 className="mb-1">Daweo</h5>
                 <div className="text-muted">
-                  <span>{data?.departure_time} </span>
+                  <span>{extractTime12HourFormat(data?.departure_time)} </span>
                   <span className="mx-2">-</span>
-                  <span>{data?.arrival_time}</span>
+                  <span>{extractTime12HourFormat(data?.arrival_time)}</span>
                 </div>
                 <div className="text-muted">
                   <span>{data?.Route?.source} </span>
@@ -32,7 +30,6 @@ const Trip = ({ data }) => {
             </div>
 
             <div className="d-flex align-items-center">
-
               <Badge bg="warning" className="me-2">
                 Luxury
               </Badge>

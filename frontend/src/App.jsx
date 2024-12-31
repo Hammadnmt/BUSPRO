@@ -31,9 +31,9 @@ export default function App() {
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Signup />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route index path="home" element={<Home />} />
+          <Route index path="/signup" element={<Signup />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/trip" element={<Trip />} />
           <Route path="/book" element={<ContactForm />} />

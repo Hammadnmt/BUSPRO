@@ -9,12 +9,12 @@ import { getCurrentDate } from "../utils/getCurrenDate";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { convertTimeToTimestamp } from "../utils/helpers";
 
 const TravelSearchForm = () => {
   const { data: routeData } = useGetAllroutesQuery();
   const [triggerQuery, { data, isLoading, isError, error }] =
     useLazyGetTripByRouteQuery();
-  console.log(error)
   const {
     register,
     handleSubmit,
@@ -29,7 +29,6 @@ const TravelSearchForm = () => {
       date: getCurrentDate(),
     },
   });
-
   const [suggestions, setSuggestions] = useState({
     from: [],
     to: [],
@@ -134,14 +133,18 @@ const TravelSearchForm = () => {
     triggerQuery({
       to: formData.to,
       from: formData.from,
-      date: new Date(formData.date).toISOString(),
+      date: new Date(formData.date).getTime(),
     })
       .unwrap()
-      .then(() => {
-        toast.success("Trips fetched successfully!");
+      .then((trips) => {
+        if (trips.length == 0) {
+          toast.error("Not Trips Found for this Date.");
+        } else {
+          toast.success("Trips fetched successfully!");
+        }
       })
       .catch((err) => {
-        toast.error(error.message || "An error occurred.");
+        toast.error(error.message || "An error occurred.", err);
       });
   };
 
@@ -157,7 +160,7 @@ const TravelSearchForm = () => {
 
   return (
     <>
-      <div>
+      <div className="mt-5">
         <Row>
           <Col>
             <Card>
@@ -177,9 +180,13 @@ const TravelSearchForm = () => {
                           <input
                             {...field}
                             type="text"
-                            className={`form-control ${errors.from ? "is-invalid" : ""}`}
+                            className={`form-control ${
+                              errors.from ? "is-invalid" : ""
+                            }`}
                             placeholder="From (City)"
-                            onChange={(e) => handleInputChange("from", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("from", e.target.value)
+                            }
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowSuggestions((prev) => ({
@@ -200,7 +207,11 @@ const TravelSearchForm = () => {
                         <ExpandMore className="h-4 w-4" />
                       </Button>
                     </div>
-                    {errors.from && <div className="invalid-feedback">{errors.from.message}</div>}
+                    {errors.from && (
+                      <div className="invalid-feedback">
+                        {errors.from.message}
+                      </div>
+                    )}
                     {showSuggestions.from && suggestions.from.length > 0 && (
                       <div
                         style={dropdownStyles}
@@ -211,7 +222,9 @@ const TravelSearchForm = () => {
                             <ListGroup.Item
                               key={index}
                               action
-                              onClick={() => handleSuggestionClick(city, "from")}
+                              onClick={() =>
+                                handleSuggestionClick(city, "from")
+                              }
                               className="cursor-pointer"
                             >
                               {city}
@@ -232,9 +245,13 @@ const TravelSearchForm = () => {
                           <input
                             {...field}
                             type="text"
-                            className={`form-control ${errors.to ? "is-invalid" : ""}`}
+                            className={`form-control ${
+                              errors.to ? "is-invalid" : ""
+                            }`}
                             placeholder="To (City)"
-                            onChange={(e) => handleInputChange("to", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("to", e.target.value)
+                            }
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowSuggestions((prev) => ({
@@ -255,7 +272,11 @@ const TravelSearchForm = () => {
                         <ExpandMore className="h-4 w-4" />
                       </Button>
                     </div>
-                    {errors.to && <div className="invalid-feedback">{errors.to.message}</div>}
+                    {errors.to && (
+                      <div className="invalid-feedback">
+                        {errors.to.message}
+                      </div>
+                    )}
                     {showSuggestions.to && suggestions.to.length > 0 && (
                       <div
                         style={dropdownStyles}
@@ -285,11 +306,17 @@ const TravelSearchForm = () => {
                       <input
                         {...field}
                         type="date"
-                        className={`form-control ${errors.date ? "is-invalid" : ""}`}
+                        className={`form-control ${
+                          errors.date ? "is-invalid" : ""
+                        }`}
                       />
                     )}
                   />
-                  {errors.date && <div className="invalid-feedback">{errors.date.message}</div>}
+                  {errors.date && (
+                    <div className="invalid-feedback">
+                      {errors.date.message}
+                    </div>
+                  )}
 
                   <Button
                     className="mb-3 w-100 w-md-auto"

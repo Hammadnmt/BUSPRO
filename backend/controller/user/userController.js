@@ -24,6 +24,7 @@ const getAllUsers = async (req, res, next) => {
 //get user
 const getOneUser = async (req, res, next) => {
   try {
+    console.log(req.params.id);
     const userdata = await User.findById(req.params.id);
     if (userdata == null) {
       throw new Error("No User Found");

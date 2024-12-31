@@ -6,6 +6,7 @@ import { useGetAllroutesQuery } from "../../features/route/routeSlice";
 import Loader from "../Loading";
 import { useForm } from "react-hook-form";
 import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
+import { convertTimeToTimestamp } from "../../utils/helpers";
 
 const CreateTrip = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const CreateTrip = () => {
   });
 
   const onSubmit = async (e) => {
+    // e.preventDefault();
     try {
       await createTrip(tripDetails).unwrap();
       reset();
@@ -45,7 +47,6 @@ const CreateTrip = () => {
       }
     }
   };
-
 
   useEffect(() => {
     if (isSuccess) {
@@ -140,7 +141,7 @@ const CreateTrip = () => {
                         onChange={(e) =>
                           setTripDetails((prev) => ({
                             ...prev,
-                            travel_date: e.target.value,
+                            travel_date: new Date(e.target.value).getTime(),
                           }))
                         }
                         className={errors.travel_date ? "is-invalid" : ""}
@@ -161,12 +162,11 @@ const CreateTrip = () => {
                           required: "Arrival time is required",
                         })}
                         onChange={(e) => {
-                          const currentDate = new Date();
-                          const [hours, minutes] = e.target.value.split(":");
-                          currentDate.setHours(hours, minutes, 0, 0);
                           setTripDetails((prev) => ({
                             ...prev,
-                            arrival_time: currentDate.toISOString(),
+                            arrival_time: convertTimeToTimestamp(
+                              e.target.value
+                            ),
                           }));
                         }}
                         className={errors.arrival_time ? "is-invalid" : ""}
@@ -189,12 +189,11 @@ const CreateTrip = () => {
                           required: "Departure time is required",
                         })}
                         onChange={(e) => {
-                          const currentDate = new Date(); // Get current date
-                          const [hours, minutes] = e.target.value.split(":"); // Extract hours and minutes
-                          currentDate.setHours(hours, minutes, 0, 0); // Set hours and minutes to current date
                           setTripDetails((prev) => ({
                             ...prev,
-                            departure_time: currentDate.toISOString(), // Convert to ISO string
+                            departure_time: convertTimeToTimestamp(
+                              e.target.value
+                            ),
                           }));
                         }}
                         className={errors.departure_time ? "is-invalid" : ""}
@@ -236,7 +235,7 @@ const CreateTrip = () => {
                 </Button>
                 {isError && (
                   <small className="text-danger mt-3">
-                    {error?.data?.message || "Failed to create trip"}
+                    {error?.message || "Failed to create trip"}
                   </small>
                 )}
               </Form>
