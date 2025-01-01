@@ -3,26 +3,70 @@ const Trip = require("../../model/trip/tripModel");
 const Booking = require("../../model/booking/bookingModell");
 
 // Create a new booking
+// const createBooking = async (req, res, next) => {
+//   try {
+//     const { user, trip, travel_date, booked_seats } = req.body;
+//     console.log(booked_seats);
+//     const userdata = await User.findById(user);
+//     if (!userdata) {
+//       throw new Error("User not found");
+//     }
+//     const tripdata = await Trip.findById(trip);
+//     if (!tripdata) {
+//       throw new Error("Trip not found");
+//     }
+//     const booking = await Booking.create({
+//       user,
+//       trip,
+//       travel_date,
+//       booked_seats,
+//     });
+//     if (!booking) {
+//       throw new Error("Booking failed");
+//     }
+//     res.status(201).json({
+//       status: "success",
+//       data: booking,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 const createBooking = async (req, res, next) => {
   try {
     const { user, trip, travel_date, booked_seats } = req.body;
+    // Check if user and trip exist
     const userdata = await User.findById(user);
-    if (!userdata) {
-      throw new Error("User not found");
-    }
+    if (!userdata) return res.status(404).json({ error: "User not found" });
+
     const tripdata = await Trip.findById(trip);
-    if (!tripdata) {
-      throw new Error("Trip not found");
+    if (!tripdata) return res.status(404).json({ error: "Trip not found" });
+
+    // Check for already booked seats
+    const existingBookings = await Booking.find({
+      trip,
+      travel_date,
+      "booked_seats.seat_no": { $in: booked_seats.seat_no },
+    });
+
+    if (existingBookings.length) {
+      const alreadyBookedSeats = existingBookings
+        .flatMap((b) => b.booked_seats.seat_no)
+        .filter((seat) => booked_seats.seat_no.includes(seat));
+
+      return res.status(400).json({
+        error: `Seats already booked: ${alreadyBookedSeats.join(", ")}`,
+      });
     }
+
+    // Create booking
     const booking = await Booking.create({
       user,
       trip,
       travel_date,
       booked_seats,
     });
-    if (!booking) {
-      throw new Error("Booking failed");
-    }
+
     res.status(201).json({
       status: "success",
       data: booking,
@@ -31,6 +75,7 @@ const createBooking = async (req, res, next) => {
     next(error);
   }
 };
+
 
 //get booking
 const getBookings = async (req, res, next) => {
@@ -85,7 +130,9 @@ const updateBooking = async (req, res, next) => {
 
 const getBookingByUserId = async (req, res, next) => {
   try {
-    const booking = await Booking.find({ user: req.params.id }).populate("user").populate("trip");
+    const booking = await Booking.find({ user: req.params.id })
+      .populate("user")
+      .populate("trip");
     if (!booking) {
       throw new Error("Booking not found for this user");
     }
@@ -100,20 +147,30 @@ const getBookingByUserId = async (req, res, next) => {
 
 const getBookingByTripId = async (req, res, next) => {
   try {
-    const booking = await Booking.find({ trip: req.params.id }).populate("user").populate("trip");
-    if (!booking) {
-      throw new Error("Booking not found for this trip");
+    const booking = await Booking.find({ trip: req.params.id })
+      .populate("user")
+      .populate({
+        path: "trip",
+        populate: [
+          { path: "Bus", model: "Bus" },
+          { path: "Route", model: "Route" },
+        ],
+      });
+    if (booking.length == 0) {
+      res.status(200).json({
+        status: true,
+        data: [],
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        data: booking,
+      });
     }
-    res.status(200).json({
-      status: "success",
-      data: booking,
-    });
   } catch (error) {
     next(error);
   }
 };
-
-
 
 module.exports = {
   createBooking,

@@ -53,12 +53,14 @@ const bookApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
-  })
+  }),
 });
 
 export const {
   useGetBookingsQuery,
   useCreateBookingMutation,
   useDeleteBookingMutation,
-  useUpdateBookingMutation
+  useUpdateBookingMutation,
+  useGetBookingByUserIdQuery,
+  useGetBookingsByTripIdQuery,
 } = bookApi;

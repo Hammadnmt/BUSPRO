@@ -13,12 +13,12 @@ const {
 } = require("../controller/booking/bookingController");
 
 router.route("/").get(authMiddleware, getBookings);
-router.route("/create").post(authMiddleware, createBooking);
+router.route("/create").post(createBooking);
 router
   .route("/:id")
   .delete(authMiddleware, roleMiddleware, deleteBooking)
   .patch(authMiddleware, roleMiddleware, updateBooking);
 
-router.route("/user/:id").get(authMiddleware, getBookingByUserId)
-router.route("/trip/:id").get(authMiddleware, roleMiddleware, getBookingByTripId)
+router.route("/user/:id").get(authMiddleware, getBookingByUserId);
+router.route("/trip/:id").get(getBookingByTripId);
 module.exports = router;

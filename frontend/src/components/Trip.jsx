@@ -1,8 +1,11 @@
 /* eslint-disable react/prop-types */
+import { useNavigate } from "react-router";
 import { Card, Button, Row, Col, Badge } from "react-bootstrap";
 import { extractTime12HourFormat } from "../utils/helpers";
 
 const Trip = ({ data }) => {
+  console.log(data?._id);
+  const navigate = useNavigate();
   return (
     <Card className="shadow-sm mb-3 w-50">
       <Card.Body>
@@ -36,10 +39,14 @@ const Trip = ({ data }) => {
               <Badge bg="success">Refundable</Badge>
             </div>
           </Col>
-
           <Col md={4} className="text-end">
             <h4 className="mb-3">PKR {data?.Route?.fare}</h4>
-            <Button variant="primary">Check Seats</Button>
+            <Button
+              onClick={() => navigate(`/trip/${data?._id}`)}
+              variant="primary"
+            >
+              Check Seats
+            </Button>
           </Col>
         </Row>
       </Card.Body>

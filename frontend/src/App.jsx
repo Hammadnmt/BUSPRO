@@ -13,17 +13,18 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import CreateRoute from "./components/Routes/CreateRoute";
 import UpdateRoute from "./components/Routes/updateRoute";
 import Signup from "./components/Signup";
-import Trip from "./components/Trip";
+
 import CreateTrip from "./components/Trip/CreateTrip";
 import UpdateTrip from "./components/Trip/UpdateTrip";
 import NotFound from "./pages/404";
 import Booking from "./pages/Booking";
 import BusPage from "./pages/Buses";
 import Home from "./pages/Home";
-import UserProfile from "./pages/UserProfile";
+
 import RoutePage from "./pages/routes";
 import TripPage from "./pages/TripPage";
 import Users from "./pages/users";
+import CheckSeats from "./components/CheckSeats";
 
 export default function App() {
   return (
@@ -31,12 +32,11 @@ export default function App() {
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route index path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/trip" element={<Trip />} />
-          <Route path="/book" element={<ContactForm />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/trip/:id" element={<CheckSeats />} />
+          <Route path="/book/:id" element={<ContactForm />} />
           <Route path="" element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index path="dashboard" element={<Dashboard />} />

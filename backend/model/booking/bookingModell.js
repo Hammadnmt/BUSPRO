@@ -25,11 +25,11 @@ const BookingSchema = new mongoose.Schema(
     booked_seats: [
       {
         seat_no: {
-          type: Number,
+          type: [Number],
           required: [true, "Seat number is required"],
         },
         gender: {
-          type: String,
+          type: [String],
           lowercase: true,
           enum: ["male", "female", "other"],
           required: [true, "Gender is required"],
