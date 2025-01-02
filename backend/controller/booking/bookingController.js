@@ -3,36 +3,6 @@ const Trip = require("../../model/trip/tripModel");
 const Booking = require("../../model/booking/bookingModell");
 const Payment = require("../../model/payment/paymentModel");
 
-// Create a new booking
-// const createBooking = async (req, res, next) => {
-//   try {
-//     const { user, trip, travel_date, booked_seats } = req.body;
-//     console.log(booked_seats);
-//     const userdata = await User.findById(user);
-//     if (!userdata) {
-//       throw new Error("User not found");
-//     }
-//     const tripdata = await Trip.findById(trip);
-//     if (!tripdata) {
-//       throw new Error("Trip not found");
-//     }
-//     const booking = await Booking.create({
-//       user,
-//       trip,
-//       travel_date,
-//       booked_seats,
-//     });
-//     if (!booking) {
-//       throw new Error("Booking failed");
-//     }
-//     res.status(201).json({
-//       status: "success",
-//       data: booking,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 const createBooking = async (req, res, next) => {
   try {
     console.log(req.body);

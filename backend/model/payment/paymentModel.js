@@ -20,7 +20,7 @@ const PaymentSchema = new mongoose.Schema(
     payment_method: {
       type: String,
       lowercase: true,
-      enum: ["debit Card", "jazzcash"],
+      enum: ["debit card", "jazzcash"],
       required: [true, "Payment mode is required"],
     },
   },

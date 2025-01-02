@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Form, Row, Col, Container, Card, Button } from "react-bootstrap";
 import { useLocation } from "react-router";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
+import { useGetTripByIdQuery } from "../features/trip/tripSlice"
 import { useCreateBookingMutation } from "../features/booking/bookingSlice";
 import { getUser } from "../utils/getUser";
 
@@ -11,12 +12,13 @@ const ContactForm = () => {
   const { data: userdata } = useGetUserByIdQuery(getUser());
   const [createBooking, { isLoading, isSuccess, error }] =
     useCreateBookingMutation();
-    const { bookedInfo, tripId, totalFare } = state.state;
-
+  const { bookedInfo, tripId, totalFare } = state.state;
+  const { data: tripData } = useGetTripByIdQuery(tripId);
   const {
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -25,10 +27,14 @@ const ContactForm = () => {
       fullname: "",
       lastName: "",
       agree: false,
+      amount_to_pay: totalFare || "",
+      payment_method: "",
     },
   });
 
-  const onSubmit = async () => {
+  const selectedPaymentMethod = watch("payment_method");
+
+  const onSubmit = async (data) => {
     const bookingDetails = {
       user: userdata?._id,
       trip: tripId,
@@ -39,14 +45,15 @@ const ContactForm = () => {
         },
       ],
       travel_date: tripData?.travel_date,
+      amount: data.amount_to_pay,
+      payment_method: data.payment_method,
     };
-    console.log("Booking Details: ", bookingDetails);
     try {
+      console.log(bookingDetails);
       await createBooking(bookingDetails).unwrap();
     } catch (err) {
       console.error("Failed to create booking: ", err);
     }
-    // console.log("Form Submitted: ", userdata);
   };
 
   useEffect(() => {
@@ -54,8 +61,9 @@ const ContactForm = () => {
       setValue("phone_number", userdata?.phone_number || "");
       setValue("email", userdata?.email || "");
       setValue("fullname", userdata?.name || "");
+      setValue("amount_to_pay", totalFare || "");
     }
-  }, [userdata, setValue]);
+  }, [userdata, setValue, totalFare]);
 
   return (
     <Container className="mt-4">
@@ -67,7 +75,7 @@ const ContactForm = () => {
             <Row className="mb-4">
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>Mobile Nu mber</Form.Label>
+                  <Form.Label>Mobile Number</Form.Label>
                   <Controller
                     name="phone_number"
                     control={control}
@@ -169,15 +177,100 @@ const ContactForm = () => {
                 </Form.Group>
               </Col>
             </Row>
-
-            <div className="d-flex justify-content-end">
-              <Button type="submit" variant="primary" size="lg">
-                Book Now
-              </Button>
-            </div>
           </Form>
         </Card.Body>
       </Card>
+
+      <Container className="mt-4">
+        <Card>
+          <Card.Body>
+            <h4>Booking Summary</h4>
+            <div className="table-responsive mb-4">
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Seat Number</th>
+                    <th>Gender</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookedInfo.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.seatNumber}</td>
+                      <td>{item.gender}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Second Form */}
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <Row className="mb-4">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Amount to Pay (Rs.)</Form.Label>
+                    <Controller
+                      name="amount_to_pay"
+                      control={control}
+                      rules={{
+                        required: "Amount is required",
+                        min: {
+                          value: totalFare,
+                          message: `Amount must be at least ${totalFare} Rs.`,
+                        },
+                      }}
+                      render={({ field }) => (
+                        <Form.Control {...field} type="number" readOnly />
+                      )}
+                    />
+                    {errors.amount_to_pay && (
+                      <Form.Text className="text-danger">
+                        {errors.amount_to_pay.message}
+                      </Form.Text>
+                    )}
+                  </Form.Group>
+                </Col>
+
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Payment Method</Form.Label>
+                    <Controller
+                      name="payment_method"
+                      control={control}
+                      rules={{ required: "Please select a payment method" }}
+                      render={({ field }) => (
+                        <Form.Select {...field}>
+                          <option value="">Select payment method</option>
+                          <option value="debit card">Debit Card</option>
+                          <option value="jazzcash">JazzCash</option>
+                        </Form.Select>
+                      )}
+                    />
+                    {errors.payment_method && (
+                      <Form.Text className="text-danger">
+                        {errors.payment_method.message}
+                      </Form.Text>
+                    )}
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <div className="d-flex justify-content-end">
+                <Button
+                  variant="success"
+                  size="lg"
+                  type="submit"
+                  disabled={!selectedPaymentMethod}
+                >
+                  Book
+                </Button>
+              </div>
+            </Form>
+          </Card.Body>
+        </Card>
+      </Container>
+
     </Container>
   );
 };
