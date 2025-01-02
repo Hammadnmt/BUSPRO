@@ -20,7 +20,6 @@ const getTrips = async (req, res, next) => {
 const getTripByRoute = async (req, res, next) => {
   try {
     const { to, from, date } = req.query;
-    console.log(date);
     const routedata = await Route.find({ source: from, destination: to });
     if (routedata.length == 0) {
       return res.status(404).json({
@@ -77,12 +76,14 @@ const getTripsBydate = async (req, res, next) => {
 
 const getTrip = async (req, res, next) => {
   try {
+    console.log(req.params.id);
     const trip = await Trip.findById(req.params.id)
       .populate("Bus")
       .populate("Route");
     if (!trip) {
       throw new Error("Trip not found");
     }
+    console.log(trip);
     res.status(200).json({
       status: true,
       data: trip,

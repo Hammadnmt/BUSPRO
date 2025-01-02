@@ -25,9 +25,9 @@ const tripApi = baseApi.injectEndpoints({
     getTripById: builder.query({
       query: (id) => ({
         url: `/trip/${id}`,
-        method: "GET",
+        // method: "GET",
       }),
-      // invalidatesTags: ["Trip"],
+      providesTags: ["Trip"], // Provide "Trip" cache for trip
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),

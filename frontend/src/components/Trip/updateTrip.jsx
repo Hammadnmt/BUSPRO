@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useGetTripByIdQuery, useUpdateTripMutation } from "../../features/trip/tripSlice";
+import {
+  useGetTripByIdQuery,
+  useUpdateTripMutation,
+} from "../../features/trip/tripSlice";
 import { useGetBusesQuery } from "../../features/bus/busSlice";
 import { useGetAllroutesQuery } from "../../features/route/routeSlice";
 import { useForm } from "react-hook-form";
 import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
 import Loader from "../Loading";
+import { getCurrentDate } from "../../utils/getCurrenDate";
 
 const UpdateTrip = () => {
   const { id } = useParams();
@@ -49,7 +53,6 @@ const UpdateTrip = () => {
       }
     }
   };
-
 
   useEffect(() => {
     if (tripData) {
@@ -147,6 +150,7 @@ const UpdateTrip = () => {
                       <Form.Label>Travel Date</Form.Label>
                       <Form.Control
                         type="date"
+                        min={getCurrentDate()}
                         {...register("travel_date", {
                           required: "Travel date is required",
                         })}

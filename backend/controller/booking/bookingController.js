@@ -1,6 +1,7 @@
 const User = require("../../model/user/userModel");
 const Trip = require("../../model/trip/tripModel");
 const Booking = require("../../model/booking/bookingModell");
+const Payment = require("../../model/payment/paymentModel");
 
 // Create a new booking
 // const createBooking = async (req, res, next) => {
@@ -34,8 +35,9 @@ const Booking = require("../../model/booking/bookingModell");
 // };
 const createBooking = async (req, res, next) => {
   try {
-    const { user, trip, travel_date, booked_seats } = req.body;
-    // Check if user and trip exist
+    console.log(req.body);
+    const { user, trip, travel_date, booked_seats, amount, payment_method } =
+      req.body;
     const userdata = await User.findById(user);
     if (!userdata) return res.status(404).json({ error: "User not found" });
 
@@ -66,16 +68,27 @@ const createBooking = async (req, res, next) => {
       travel_date,
       booked_seats,
     });
-
-    res.status(201).json({
-      status: "success",
-      data: booking,
-    });
+    if (!booking) {
+      throw new Error("Booking failed");
+    } else {
+      const payment = await Payment.create({
+        booking: booking._id,
+        amount,
+        payment_method,
+      });
+      if (!payment) {
+        throw new Error("Booking failed");
+      } else {
+        res.status(201).json({
+          status: true,
+          message: "Booking created successfully",
+        });
+      }
+    }
   } catch (error) {
     next(error);
   }
 };
-
 
 //get booking
 const getBookings = async (req, res, next) => {

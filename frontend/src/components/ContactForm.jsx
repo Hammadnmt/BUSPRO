@@ -1,19 +1,17 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Form, Row, Col, Container, Card, Button } from "react-bootstrap";
-import { useParams, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
 import { useCreateBookingMutation } from "../features/booking/bookingSlice";
 import { getUser } from "../utils/getUser";
 
 const ContactForm = () => {
+  const state = useLocation();
   const { data: userdata } = useGetUserByIdQuery(getUser());
   const [createBooking, { isLoading, isSuccess, error }] =
     useCreateBookingMutation();
-  const { id } = useParams();
-  const state = useLocation();
-  const bookedInfo = state.state;
-  console.log(bookedInfo);
+    const { bookedInfo, tripId, totalFare } = state.state;
 
   const {
     handleSubmit,
@@ -33,17 +31,17 @@ const ContactForm = () => {
   const onSubmit = async () => {
     const bookingDetails = {
       user: userdata?._id,
-      trip: id,
+      trip: tripId,
       booked_seats: [
         {
           seat_no: bookedInfo.map((item) => item.seatNumber),
           gender: bookedInfo.map((item) => item.gender),
         },
       ],
-      travel_date: "2025-01-02T00:00:00.000+00:00",
+      travel_date: tripData?.travel_date,
     };
+    console.log("Booking Details: ", bookingDetails);
     try {
-      console.log("Booking Details: ", bookingDetails);
       await createBooking(bookingDetails).unwrap();
     } catch (err) {
       console.error("Failed to create booking: ", err);
@@ -69,7 +67,7 @@ const ContactForm = () => {
             <Row className="mb-4">
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>Mobile Number</Form.Label>
+                  <Form.Label>Mobile Nu mber</Form.Label>
                   <Controller
                     name="phone_number"
                     control={control}

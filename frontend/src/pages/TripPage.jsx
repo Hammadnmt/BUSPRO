@@ -4,6 +4,7 @@ import {
   useGetTripsQuery,
   useDeleteTripMutation,
 } from "../features/trip/tripSlice";
+import { extractTime12HourFormat } from "../utils/helpers";
 
 function Booking() {
   const { data, isLoading, isFetching } = useGetTripsQuery();
@@ -26,8 +27,8 @@ function Booking() {
     source: entry.Route?.source || "N/A",
     destination: entry.Route?.destination || "N/A",
     travel_date: entry.travel_date.split("T")[0] || "N/A",
-    departure_time: entry.departure_time.split("T")[1] || "N/A",
-    arrival_time: entry.arrival_time.split("T")[1] || "N/A",
+    departure_time: extractTime12HourFormat(entry.departure_time) || "N/A",
+    arrival_time: extractTime12HourFormat(entry.arrival_time) || "N/A",
     status: entry.status || "N/A",
   }));
   const handleAdd = () => {

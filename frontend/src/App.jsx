@@ -24,7 +24,7 @@ import Home from "./pages/Home";
 import RoutePage from "./pages/routes";
 import TripPage from "./pages/TripPage";
 import Users from "./pages/users";
-import CheckSeats from "./components/CheckSeats";
+import BookingReview from "./components/TripReview";    
 
 export default function App() {
   return (
@@ -35,8 +35,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route index path="/signup" element={<Signup />} />
           <Route path="/" element={<Home />} />
-          <Route path="/trip/:id" element={<CheckSeats />} />
-          <Route path="/book/:id" element={<ContactForm />} />
+          <Route path="/review" element={<BookingReview />} />
+          <Route path="/book" element={<ContactForm />} />
           <Route path="" element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index path="dashboard" element={<Dashboard />} />

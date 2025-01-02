@@ -7,6 +7,7 @@ import Loader from "../Loading";
 import { useForm } from "react-hook-form";
 import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
 import { convertTimeToTimestamp } from "../../utils/helpers";
+import { getCurrentDate } from "../../utils/getCurrenDate";
 
 const CreateTrip = () => {
   const navigate = useNavigate();
@@ -135,6 +136,7 @@ const CreateTrip = () => {
                       <Form.Label>Travel Date</Form.Label>
                       <Form.Control
                         type="date"
+                        min={getCurrentDate()}
                         {...register("travel_date", {
                           required: "Travel date is required",
                         })}

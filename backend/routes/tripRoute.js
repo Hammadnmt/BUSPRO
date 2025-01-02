@@ -18,9 +18,9 @@ router.route("/search").get(getTripByRoute);
 router.route("/").get(getTrips);
 router
   .route("/:id")
-  .patch(authMiddleware, roleMiddleware, updateTrip)
-  .delete(authMiddleware, roleMiddleware, deleteTrip)
   .get(getTrip)
-  .get(getTripsBydate);
+  .patch(authMiddleware, roleMiddleware, updateTrip)
+  .delete(authMiddleware, roleMiddleware, deleteTrip);
+// .get(getTripsBydate);
 
 module.exports = router;

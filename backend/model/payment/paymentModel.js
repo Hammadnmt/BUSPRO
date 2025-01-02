@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 
 const PaymentSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "User reference is required"],
-    },
     booking: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
@@ -25,7 +20,7 @@ const PaymentSchema = new mongoose.Schema(
     payment_method: {
       type: String,
       lowercase: true,
-      enum: ["debit Card", "jazzCash"],
+      enum: ["debit Card", "jazzcash"],
       required: [true, "Payment mode is required"],
     },
   },

@@ -160,12 +160,12 @@ const TravelSearchForm = () => {
 
   return (
     <>
-      <div className="mt-5">
+      <div className="container">
         <Row>
           <Col>
             <Card>
               <Card.Body>
-                <h3 className="text-center mb-4">Book Your Ticket Here</h3>
+                <h3 className="text-center mt-4">Book Your Ticket Here</h3>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
@@ -306,6 +306,7 @@ const TravelSearchForm = () => {
                       <input
                         {...field}
                         type="date"
+                        min={getCurrentDate()}
                         className={`form-control ${
                           errors.date ? "is-invalid" : ""
                         }`}
