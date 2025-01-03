@@ -48,8 +48,8 @@ const ContactForm = () => {
       amount: data.amount_to_pay,
       payment_method: data.payment_method,
     };
+    console.log(bookingDetails);
     try {
-      console.log(bookingDetails);
       await createBooking(bookingDetails).unwrap();
     } catch (err) {
       console.error("Failed to create booking: ", err);

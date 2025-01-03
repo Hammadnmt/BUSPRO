@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config();
 const PORT = process.env.PORT || 3000;
+const db = require("./config/connection");
 const authRouter = require("./routes/authRoute");
 const tripRouter = require("./routes/tripRoute");
 const busRouter = require("./routes/busRoute");
@@ -19,15 +20,15 @@ const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
 };
-mongoose
-  .connect("mongodb://localhost:27017/Project")
-  .then((result) => {
-    console.log(`Db connected`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
+// mongoose
+//   .connect("mongodb://localhost:27017/Project")
+//   .then((result) => {
+//     console.log(`Db connected`);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+db();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(validateJsonBody);
