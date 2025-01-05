@@ -6,13 +6,20 @@ import {
   useGetRouteByIdQuery,
   useUpdateRouteMutation,
 } from "../../features/route/routeSlice";
-import { Container, Button, Row, Col, Form, Card } from "react-bootstrap";
+import {
+  Container,
+  Button,
+  Row,
+  Col,
+  Form,
+  Card,
+  ToastContainer,
+} from "react-bootstrap";
 import Loader from "../Loading";
 import { toast } from "react-toastify";
 
 const UpdateBus = () => {
   const { id } = useParams();
-  // console.log(id);
   const navigate = useNavigate();
   const {
     register,
@@ -24,7 +31,7 @@ const UpdateBus = () => {
   const { data, isLoading: loading } = useGetRouteByIdQuery(id);
   const [updateRoute, { isLoading, error, isSuccess }] =
     useUpdateRouteMutation();
-  console.log(data);
+
   useEffect(() => {
     if (data) {
       setValue("source", data.source);
@@ -35,6 +42,7 @@ const UpdateBus = () => {
     }
 
     if (isSuccess) {
+      toast.success("Route updated successfully!");
       navigate("/admin/route");
     }
   }, [data, isSuccess, navigate, setValue]);
@@ -58,16 +66,14 @@ const UpdateBus = () => {
   }
 
   return (
-    <Container className="d-flex  justify-content-center  min-vh-100 min-vw-100">
-      <Row>
-        <Col>
-          <Card className="card mt-2">
+    <Container fluid className="d-flex justify-content-center min-vh-100">
+      <ToastContainer />
+      <Row className="justify-content-center">
+        <Col xs={12} md={6} lg={4}>
+          <Card className="shadow border-0">
             <Card.Body>
-              <h3 className="text-center mb-4">Route Details</h3>
-              <Form
-                onSubmit={handleSubmit(onSubmit)}
-                className="d-flex flex-column justify-content-center align-items-center"
-              >
+              <h3 className="text-center mb-4">Update Route Details</h3>
+              <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
                   <Form.Control
                     type="text"
@@ -149,10 +155,10 @@ const UpdateBus = () => {
                     type="number"
                     placeholder="Enter Fare: (PKR)"
                     {...register("fare", {
-                      required: "fare is required",
+                      required: "Fare is required",
                       pattern: {
                         value: /^[0-9]+$/,
-                        message: "fare only contains number",
+                        message: "Fare only contains numbers",
                       },
                     })}
                     className={errors.fare ? "is-invalid" : ""}
@@ -161,11 +167,11 @@ const UpdateBus = () => {
                     <small className="text-danger">{errors.fare.message}</small>
                   )}
                 </Form.Group>
-                <Button type="submit" variant="success">
+                <Button type="submit" variant="success" disabled={isLoading}>
                   {isLoading ? "Updating..." : "Update"}
                 </Button>
                 {error && (
-                  <small className="text-danger mt-3 text-center">
+                  <small className="text-danger mt-3">
                     {error?.data?.message}
                   </small>
                 )}

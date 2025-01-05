@@ -10,7 +10,7 @@ const genToken = (data) => {
       },
     },
     "abc$123%xyz^098",
-    { expiresIn: "15m" }
+    { expiresIn: "2d" }
   );
   return accessToken;
 };

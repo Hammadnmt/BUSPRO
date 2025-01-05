@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useForm } from "react-hook-form";
@@ -6,13 +5,12 @@ import {
   useGetBusByIdQuery,
   useUpdateBusMutation,
 } from "../../features/bus/busSlice";
-import { Container, Button, Row, Col, Form, Card } from "react-bootstrap";
+import { Container, Row, Col, Form, Card, Button } from "react-bootstrap";
 import Loader from "../Loading";
 import { toast } from "react-toastify";
 
 const UpdateBus = () => {
   const { id } = useParams();
-  // console.log(id);
   const navigate = useNavigate();
   const {
     register,
@@ -23,7 +21,7 @@ const UpdateBus = () => {
 
   const { data, isLoading: loading } = useGetBusByIdQuery(id);
   const [updateBus, { isLoading, error, isSuccess }] = useUpdateBusMutation();
-  console.log(data);
+
   useEffect(() => {
     if (data) {
       setValue("busNumber", data.bus_no);
@@ -31,6 +29,7 @@ const UpdateBus = () => {
     }
 
     if (isSuccess) {
+      toast.success("Bus updated successfully!");
       navigate("/admin/bus");
     }
   }, [data, isSuccess, navigate, setValue]);
@@ -54,16 +53,13 @@ const UpdateBus = () => {
   }
 
   return (
-    <Container className="d-flex  justify-content-center  min-vh-100 min-vw-100">
-      <Row>
-        <Col>
-          <Card className="card mt-2">
+    <Container fluid className="d-flex justify-content-center min-vh-100">
+      <Row className="justify-content-center">
+        <Col xs={12} md={6} lg={4}>
+          <Card className="shadow border-0">
             <Card.Body>
               <h3 className="text-center mb-4">Bus Details</h3>
-              <Form
-                onSubmit={handleSubmit(onSubmit)}
-                className="d-flex flex-column justify-content-center align-items-center"
-              >
+              <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
                   <Form.Control
                     type="text"
@@ -87,17 +83,18 @@ const UpdateBus = () => {
                       required: "Total seats is required",
                       pattern: {
                         value: /^[0-9]+$/,
+                        message: "Total Seats must be a number",
                       },
                     })}
                     className={errors.seats ? "is-invalid" : ""}
                   />
-                  {errors.totalSeats && (
+                  {errors.seats && (
                     <small className="text-danger">
                       {errors.seats.message}
                     </small>
                   )}
                 </Form.Group>
-                <Button type="submit" variant="success">
+                <Button type="submit" variant="success" disabled={isLoading}>
                   {isLoading ? "Updating..." : "Update"}
                 </Button>
                 {error && (

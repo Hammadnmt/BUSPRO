@@ -1,45 +1,57 @@
 // /* eslint-disable no-unused-vars */
 import { useNavigate } from "react-router";
 import { useLogoutUserMutation } from "../features/auth/authSlice";
-import { Button } from "react-bootstrap";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import { LinkContainer } from "react-router-bootstrap";
 
 function Navigation() {
-  const navigate = useNavigate();
-  const [logoutUser] = useLogoutUserMutation();
+  // const navigate = useNavigate();
+  // const [logoutUser] = useLogoutUserMutation();
+
   async function logoutButton() {
     try {
       await logoutUser();
-      navigate("/login");
+      // navigate("/login");
     } catch (error) {
       console.log(error);
     }
   }
-  return (
-    <div className="">
-      <Navbar bg="dark" data-bs-theme="dark" className="">
-        <Nav>
-          <Nav.Link href="/admin/dashboard" className="text-decoration-none">
-            Dashboard
-          </Nav.Link>
-          <Nav.Link href="/admin/user">Users</Nav.Link>
-          <Nav.Link href="/admin/bus">Buses</Nav.Link>
-          <Nav.Link href="/admin/route">Routes</Nav.Link>
-          <Nav.Link href="/admin/trip">Trips</Nav.Link>
-          <Nav.Link href="/admin/booking">Bookings</Nav.Link>
-        </Nav>
 
-        <Button
-          className="ms-auto me-3"
-          variant="secondary"
-          onClick={logoutButton}
-        >
-          Logout
-        </Button>
+  return (
+    <Container fluid className="py-3 bg-dark">
+      <Navbar bg="dark" variant="dark" expand="lg">
+        <Container fluid>
+          <Navbar.Brand href="/admin/dashboard">Admin Dashboard</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <LinkContainer to="/admin/dashboard">
+                <Nav.Link>Dashboard</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/user">
+                <Nav.Link>Users</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/bus">
+                <Nav.Link>Buses</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/route">
+                <Nav.Link>Routes</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/trip">
+                <Nav.Link>Trips</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/booking">
+                <Nav.Link>Bookings</Nav.Link>
+              </LinkContainer>
+            </Nav>
+            <Button variant="light" onClick={logoutButton}>
+              Logout
+            </Button>
+          </Navbar.Collapse>
+        </Container>
       </Navbar>
-    </div>
+    </Container>
   );
 }
 

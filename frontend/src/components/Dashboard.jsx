@@ -1,24 +1,33 @@
 import Card from "react-bootstrap/Card";
 import { ToastContainer } from "react-toastify";
+import { Container, Row, Col } from "react-bootstrap";
+
 function Dashboard() {
   return (
     <>
       <ToastContainer />
-      <div className="d-flex justify-content-center">
-        <Card className="dashboard-card m-2">
-          <Card.Body>
-            <Card.Title>Total Products </Card.Title>
-            <Card.Text>1</Card.Text>
-          </Card.Body>
-        </Card>
-        <Card className="dashboard-card m-2">
-          <Card.Body>
-            <Card.Title>Total users </Card.Title>
-            <Card.Text>2</Card.Text>
-          </Card.Body>
-        </Card>
-      </div>
+      <Container>
+        <Row>
+          <Col md={6}>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Total Products</Card.Title>
+                <Card.Text>1</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={6}>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Total Users</Card.Title>
+                <Card.Text>2</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 }
+
 export default Dashboard;

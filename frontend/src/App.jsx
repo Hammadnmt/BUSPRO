@@ -24,7 +24,7 @@ import Home from "./pages/Home";
 import RoutePage from "./pages/routes";
 import TripPage from "./pages/TripPage";
 import Users from "./pages/users";
-import BookingReview from "./components/TripReview";    
+import BookingReview from "./components/TripReview";
 
 export default function App() {
   return (
@@ -32,9 +32,9 @@ export default function App() {
       <ToastContainer />
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route index path="/signup" element={<Signup />} />
-          <Route path="/" element={<Home />} />
           <Route path="/review" element={<BookingReview />} />
           <Route path="/book" element={<ContactForm />} />
           <Route path="" element={<ProtectedRoute />}>

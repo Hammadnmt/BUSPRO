@@ -17,7 +17,6 @@ const UpdateTrip = () => {
 
   const { data: routedata, isLoading: isLoadingRoutes } =
     useGetAllroutesQuery();
-
   const { data: busdata, isLoading: isLoadingBuses } = useGetBusesQuery();
   const { data: tripData, isError, error } = useGetTripByIdQuery(id);
   const [updateTrip, { isLoading, isSuccess }] = useUpdateTripMutation();
@@ -40,12 +39,11 @@ const UpdateTrip = () => {
     status: "",
   });
 
-  const onSubmit = async (e) => {
+  const onSubmit = async () => {
     try {
       await updateTrip({ id, data: tripDetails }).unwrap();
       reset();
     } catch (err) {
-      console.log(err);
       if (err?.data?.errors) {
         Object.keys(err.data.errors).forEach((key) =>
           setError(key, { type: "server", message: err.data.errors[key] })
@@ -72,19 +70,16 @@ const UpdateTrip = () => {
   return isLoading || isLoadingRoutes || isLoadingBuses ? (
     <Loader />
   ) : (
-    <Container className="trip-form d-flex justify-content-center min-vh-100 min-vw-100">
-      <Row>
-        <Col>
-          <Card className="trip-card mt-2">
-            <Card.Body>
-              <h3 className="text-center mb-4">Update Trip</h3>
-              <Form
-                onSubmit={handleSubmit(onSubmit)}
-                className="d-flex flex-column justify-content-center align-items-center"
-              >
-                <Row>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3">
+    <Container className="py-5 min-vh-100 d-flex justify-content-center align-items-center bg-light">
+      <Row className="w-100">
+        <Col md={10} lg={8} className="mx-auto">
+          <Card className="shadow-lg border-0">
+            <Card.Body className="p-5">
+              <h3 className="text-center mb-4 text-success">Update Trip</h3>
+              <Form onSubmit={handleSubmit(onSubmit)}>
+                <Row className="mb-3">
+                  <Col sm={12} md={6}>
+                    <Form.Group>
                       <Form.Label>Bus Number</Form.Label>
                       <Form.Select
                         {...register("Bus", {
@@ -113,8 +108,8 @@ const UpdateTrip = () => {
                       )}
                     </Form.Group>
                   </Col>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3">
+                  <Col sm={12} md={6}>
+                    <Form.Group>
                       <Form.Label>Route</Form.Label>
                       <Form.Select
                         {...register("Route", {
@@ -144,9 +139,9 @@ const UpdateTrip = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                <Row>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3">
+                <Row className="mb-3">
+                  <Col sm={12} md={6}>
+                    <Form.Group>
                       <Form.Label>Travel Date</Form.Label>
                       <Form.Control
                         type="date"
@@ -169,23 +164,20 @@ const UpdateTrip = () => {
                       )}
                     </Form.Group>
                   </Col>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3">
+                  <Col sm={12} md={6}>
+                    <Form.Group>
                       <Form.Label>Arrival Time</Form.Label>
                       <Form.Control
                         type="time"
                         {...register("arrival_time", {
                           required: "Arrival time is required",
                         })}
-                        onChange={(e) => {
-                          const currentDate = new Date();
-                          const [hours, minutes] = e.target.value.split(":");
-                          currentDate.setHours(hours, minutes, 0, 0);
+                        onChange={(e) =>
                           setTripDetails((prev) => ({
                             ...prev,
-                            arrival_time: currentDate.toISOString(),
-                          }));
-                        }}
+                            arrival_time: e.target.value,
+                          }))
+                        }
                         className={errors.arrival_time ? "is-invalid" : ""}
                       />
                       {errors.arrival_time && (
@@ -196,24 +188,21 @@ const UpdateTrip = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                <Row>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3">
+                <Row className="mb-3">
+                  <Col sm={12} md={6}>
+                    <Form.Group>
                       <Form.Label>Departure Time</Form.Label>
                       <Form.Control
                         type="time"
                         {...register("departure_time", {
                           required: "Departure time is required",
                         })}
-                        onChange={(e) => {
-                          const currentDate = new Date(); // Get current date
-                          const [hours, minutes] = e.target.value.split(":"); // Extract hours and minutes
-                          currentDate.setHours(hours, minutes, 0, 0); // Set hours and minutes to current date
+                        onChange={(e) =>
                           setTripDetails((prev) => ({
                             ...prev,
-                            departure_time: currentDate.toISOString(), // Convert to ISO string
-                          }));
-                        }}
+                            departure_time: e.target.value,
+                          }))
+                        }
                         className={errors.departure_time ? "is-invalid" : ""}
                       />
                       {errors.departure_time && (
@@ -223,8 +212,8 @@ const UpdateTrip = () => {
                       )}
                     </Form.Group>
                   </Col>
-                  <Col sm={6}>
-                    <Form.Group className="mb-3">
+                  <Col sm={12} md={6}>
+                    <Form.Group>
                       <Form.Label>Description</Form.Label>
                       <Form.Control
                         as="textarea"
@@ -248,13 +237,15 @@ const UpdateTrip = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                <Button type="submit" variant="success">
-                  {isLoading ? "Updating..." : "Update Trip"}
-                </Button>
+                <div className="d-flex justify-content-center mt-4">
+                  <Button type="submit" variant="success" className="px-5">
+                    {isLoading ? "Updating..." : "Update Trip"}
+                  </Button>
+                </div>
                 {isError && (
-                  <small className="text-danger mt-3">
-                    {error?.data?.message || "Failed to create trip"}
-                  </small>
+                  <div className="text-danger text-center mt-3">
+                    {error?.data?.message || "Failed to update trip"}
+                  </div>
                 )}
               </Form>
             </Card.Body>

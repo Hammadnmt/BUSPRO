@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router";
-// import Button from "../components/Button";
-import { Button } from "react-bootstrap";
-import Table from "react-bootstrap/Table";
+import { Button, Table } from "react-bootstrap";
 import Loader from "../components/Loading";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -20,22 +18,18 @@ export default function ReusableTable({
   return isLoading && isFetching ? (
     <Loader />
   ) : (
-    <div className="container-fluid d-inline-flex flex-column">
-      {onCreate ? (
-        <Button className="w-25" variant="success" onClick={onCreate}>
+    <div className="container-fluid d-flex flex-column">
+      {onCreate && (
+        <Button variant="success" className="mb-3 w-25" onClick={onCreate}>
           Add
         </Button>
-      ) : (
-        ""
       )}
       {data.length > 0 ? (
-        <Table striped bordered hover responsive>
+        <Table striped bordered hover responsive className="table-sm">
           <thead className="bg-indigo-600 text-white">
             <tr>
               {columns.map((col) => (
                 <th key={col.header} className="px-6 py-3 text-left">
-                  {" "}
-                  {/* Use col.header as key */}
                   {col.header}
                 </th>
               ))}
@@ -50,20 +44,24 @@ export default function ReusableTable({
               >
                 {columns.map((col) => (
                   <td key={col.key || col.header} className="px-6 py-4">
-                    {" "}
-                    {/* Use col.key or col.header as key */}
                     {item[col.key]}
                   </td>
                 ))}
-                <td className="px-6 py-4">
-                  <div className="flex flex-col gap-2">
-                    <button onClick={() => onUpdate(item._id)}>
-                      <EditIcon className="icons" />
-                    </button>
-                    <button onClick={() => onDelete(item._id)}>
-                      <DeleteIcon className="icons" />
-                    </button>
-                  </div>
+                <td className="px-6 py-4 d-flex justify-content-around">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() => onUpdate(item._id)}
+                  >
+                    <EditIcon fontSize="small" />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => onDelete(item._id)}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </button>
                 </td>
               </tr>
             ))}

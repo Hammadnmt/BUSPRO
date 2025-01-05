@@ -1,26 +1,36 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Row, Button, Col, Card, ListGroup } from "react-bootstrap";
-import { ExpandMore } from "@mui/icons-material";
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
+import { ChevronDown, Search } from "lucide-react";
+import {
+  Container,
+  Card,
+  Form,
+  Button,
+  Row,
+  Col,
+  Dropdown,
+} from "react-bootstrap";
 import { useLazyGetTripByRouteQuery } from "../features/trip/tripSlice";
 import { useGetAllroutesQuery } from "../features/route/routeSlice";
 import Trip from "./Trip";
 import { getCurrentDate } from "../utils/getCurrenDate";
-import { useForm, Controller } from "react-hook-form";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { convertTimeToTimestamp } from "../utils/helpers";
 
 const TravelSearchForm = () => {
   const { data: routeData } = useGetAllroutesQuery();
-  const [triggerQuery, { data, isLoading, isError, error }] =
+  const [triggerQuery, { data: tripData, isLoading }] =
     useLazyGetTripByRouteQuery();
+  const [suggestions, setSuggestions] = useState({ from: [], to: [] });
+  const [showSuggestions, setShowSuggestions] = useState({
+    from: false,
+    to: false,
+  });
+
   const {
-    register,
-    handleSubmit,
-    setValue,
     control,
+    handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -29,25 +39,14 @@ const TravelSearchForm = () => {
       date: getCurrentDate(),
     },
   });
-  const [suggestions, setSuggestions] = useState({
-    from: [],
-    to: [],
-  });
-
-  const [showSuggestions, setShowSuggestions] = useState({
-    from: false,
-    to: false,
-  });
 
   const watchFrom = watch("from");
 
-  // Get unique source cities
   const getSourceCities = () => {
     if (!routeData) return [];
     return [...new Set(routeData.map((route) => route.source))];
   };
 
-  // Get destinations for selected source
   const getDestinations = (source) => {
     if (!routeData) return [];
     return routeData
@@ -62,282 +61,204 @@ const TravelSearchForm = () => {
       const sourceSuggestions = getSourceCities().filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
       );
-      setSuggestions((prev) => ({
-        ...prev,
-        from: sourceSuggestions,
-      }));
-      setShowSuggestions((prev) => ({
-        ...prev,
-        from: true,
-      }));
+      setSuggestions((prev) => ({ ...prev, from: sourceSuggestions }));
+      setShowSuggestions((prev) => ({ ...prev, from: true }));
     } else if (field === "to" && watchFrom) {
       const destSuggestions = getDestinations(watchFrom).filter((city) =>
         city.toLowerCase().includes(value.toLowerCase())
       );
-      setSuggestions((prev) => ({
-        ...prev,
-        to: destSuggestions,
-      }));
-      setShowSuggestions((prev) => ({
-        ...prev,
-        to: true,
-      }));
+      setSuggestions((prev) => ({ ...prev, to: destSuggestions }));
+      setShowSuggestions((prev) => ({ ...prev, to: true }));
     }
-  };
-
-  const handleChevronClick = (field) => {
-    if (field === "from") {
-      setSuggestions((prev) => ({
-        ...prev,
-        from: getSourceCities(),
-      }));
-    } else if (field === "to" && watchFrom) {
-      setSuggestions((prev) => ({
-        ...prev,
-        to: getDestinations(watchFrom),
-      }));
-    }
-    setShowSuggestions((prev) => ({
-      ...prev,
-      [field]: true,
-    }));
   };
 
   const handleSuggestionClick = (value, field) => {
     setValue(field, value);
-    setShowSuggestions((prev) => ({
-      ...prev,
-      [field]: false,
-    }));
+    setShowSuggestions((prev) => ({ ...prev, [field]: false }));
+    if (field === "from") setValue("to", "");
+  };
 
-    if (field === "from") {
-      setValue("to", "");
+  const onSubmit = async (formData) => {
+    try {
+      const result = await triggerQuery({
+        to: formData.to,
+        from: formData.from,
+        date: new Date(formData.date).getTime(),
+      }).unwrap();
+
+      if (result.length === 0) {
+        toast.error("No trips found for this date.");
+      } else {
+        toast.success("Trips fetched successfully!");
+      }
+    } catch (err) {
+      toast.error(err.message || "An error occurred.");
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest(".input-group")) {
-        setShowSuggestions({
-          from: false,
-          to: false,
-        });
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
-
-  const onSubmit = (formData) => {
-    triggerQuery({
-      to: formData.to,
-      from: formData.from,
-      date: new Date(formData.date).getTime(),
-    })
-      .unwrap()
-      .then((trips) => {
-        if (trips.length == 0) {
-          toast.error("Not Trips Found for this Date.");
-        } else {
-          toast.success("Trips fetched successfully!");
-        }
-      })
-      .catch((err) => {
-        toast.error(error.message || "An error occurred.", err);
-      });
-  };
-
-  const dropdownStyles = {
-    maxHeight: "200px",
-    overflowY: "auto",
-    border: "1px solid rgba(0,0,0,.125)",
-    borderRadius: "0.375rem",
-    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-    backgroundColor: "white",
-    zIndex: "999999",
-  };
-
   return (
-    <>
-      <div className="container">
-        <Row>
-          <Col>
-            <Card>
-              <Card.Body>
-                <h3 className="text-center mt-4">Book Your Ticket Here</h3>
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
-                >
-                  <div className="position-relative w-100 w-md-auto">
-                    <div className="input-group">
-                      <Controller
-                        name="from"
-                        control={control}
-                        rules={{ required: "From city is required." }}
-                        render={({ field }) => (
-                          <input
-                            {...field}
-                            type="text"
-                            className={`form-control ${
-                              errors.from ? "is-invalid" : ""
-                            }`}
-                            placeholder="From (City)"
-                            onChange={(e) =>
-                              handleInputChange("from", e.target.value)
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowSuggestions((prev) => ({
-                                ...prev,
-                                from: true,
-                              }));
-                            }}
-                          />
-                        )}
-                      />
-                      <Button
-                        variant="outline-secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleChevronClick("from");
+    <Container className="py-4">
+      <Card className="border-0 shadow">
+        <div className="py-3 px-4" style={{ backgroundColor: "#364F6B" }}>
+          <h2 className="text-white text-center mb-0 fw-bold">
+            Find Your Perfect Journey
+          </h2>
+        </div>
+
+        <Card.Body className="p-4">
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Row className="g-3">
+              {/* From City */}
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#364F6B" }}>
+                    From City
+                  </Form.Label>
+                  <div className="position-relative">
+                    <Controller
+                      name="from"
+                      control={control}
+                      rules={{ required: "Departure city is required" }}
+                      render={({ field }) => (
+                        <Form.Control
+                          {...field}
+                          type="text"
+                          isInvalid={!!errors.from}
+                          placeholder="Select departure city"
+                          onChange={(e) =>
+                            handleInputChange("from", e.target.value)
+                          }
+                        />
+                      )}
+                    />
+                    <Dropdown
+                      show={showSuggestions.from && suggestions.from.length > 0}
+                    >
+                      <Dropdown.Menu
+                        style={{
+                          width: "100%",
+                          maxHeight: "200px",
+                          overflowY: "auto",
                         }}
                       >
-                        <ExpandMore className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {errors.from && (
-                      <div className="invalid-feedback">
-                        {errors.from.message}
-                      </div>
-                    )}
-                    {showSuggestions.from && suggestions.from.length > 0 && (
-                      <div
-                        style={dropdownStyles}
-                        className="position-absolute w-100 z-50"
-                      >
-                        <ListGroup variant="flush">
-                          {suggestions.from.map((city, index) => (
-                            <ListGroup.Item
-                              key={index}
-                              action
-                              onClick={() =>
-                                handleSuggestionClick(city, "from")
-                              }
-                              className="cursor-pointer"
-                            >
-                              {city}
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
-                      </div>
-                    )}
+                        {suggestions.from.map((city, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => handleSuggestionClick(city, "from")}
+                          >
+                            {city}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.from?.message}
+                    </Form.Control.Feedback>
                   </div>
+                </Form.Group>
+              </Col>
 
-                  <div className="position-relative w-100 w-md-auto">
-                    <div className="input-group">
-                      <Controller
-                        name="to"
-                        control={control}
-                        rules={{ required: "To city is required." }}
-                        render={({ field }) => (
-                          <input
-                            {...field}
-                            type="text"
-                            className={`form-control ${
-                              errors.to ? "is-invalid" : ""
-                            }`}
-                            placeholder="To (City)"
-                            onChange={(e) =>
-                              handleInputChange("to", e.target.value)
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowSuggestions((prev) => ({
-                                ...prev,
-                                to: true,
-                              }));
-                            }}
-                          />
-                        )}
-                      />
-                      <Button
-                        variant="outline-secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleChevronClick("to");
+              {/* To City */}
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#364F6B" }}>To City</Form.Label>
+                  <div className="position-relative">
+                    <Controller
+                      name="to"
+                      control={control}
+                      rules={{ required: "Destination city is required" }}
+                      render={({ field }) => (
+                        <Form.Control
+                          {...field}
+                          type="text"
+                          isInvalid={!!errors.to}
+                          placeholder="Select destination city"
+                          onChange={(e) =>
+                            handleInputChange("to", e.target.value)
+                          }
+                        />
+                      )}
+                    />
+                    <Dropdown
+                      show={showSuggestions.to && suggestions.to.length > 0}
+                    >
+                      <Dropdown.Menu
+                        style={{
+                          width: "100%",
+                          maxHeight: "200px",
+                          overflowY: "auto",
                         }}
                       >
-                        <ExpandMore className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {errors.to && (
-                      <div className="invalid-feedback">
-                        {errors.to.message}
-                      </div>
-                    )}
-                    {showSuggestions.to && suggestions.to.length > 0 && (
-                      <div
-                        style={dropdownStyles}
-                        className="position-absolute w-100 z-50"
-                      >
-                        <ListGroup variant="flush">
-                          {suggestions.to.map((city, index) => (
-                            <ListGroup.Item
-                              key={index}
-                              action
-                              onClick={() => handleSuggestionClick(city, "to")}
-                              className="cursor-pointer"
-                            >
-                              {city}
-                            </ListGroup.Item>
-                          ))}
-                        </ListGroup>
-                      </div>
-                    )}
+                        {suggestions.to.map((city, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => handleSuggestionClick(city, "to")}
+                          >
+                            {city}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.to?.message}
+                    </Form.Control.Feedback>
                   </div>
+                </Form.Group>
+              </Col>
 
+              {/* Date Selection */}
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#364F6B" }}>
+                    Travel Date
+                  </Form.Label>
                   <Controller
                     name="date"
                     control={control}
-                    rules={{ required: "Date is required." }}
+                    rules={{ required: "Travel date is required" }}
                     render={({ field }) => (
-                      <input
+                      <Form.Control
                         {...field}
                         type="date"
                         min={getCurrentDate()}
-                        className={`form-control ${
-                          errors.date ? "is-invalid" : ""
-                        }`}
+                        isInvalid={!!errors.date}
                       />
                     )}
                   />
-                  {errors.date && (
-                    <div className="invalid-feedback">
-                      {errors.date.message}
-                    </div>
-                  )}
+                  <Form.Control.Feedback type="invalid">
+                    {errors.date?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Row>
 
-                  <Button
-                    className="mb-3 w-100 w-md-auto"
-                    type="submit"
-                    variant="success"
-                  >
-                    Search
-                  </Button>
-                </form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <div className="d-flex flex-column justify-content-center align-items-center p-4">
-          {data?.map((trip) => (
-            <Trip data={trip} key={trip._id} />
+            <div className="text-center mt-4">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                style={{
+                  backgroundColor: "#364F6B",
+                  borderColor: "#364F6B",
+                }}
+                className="px-4 py-2"
+              >
+                <Search size={20} className="me-2" />
+                {isLoading ? "Searching..." : "Search Trips"}
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      {/* Trip Results */}
+      {tripData && (
+        <div className="mt-4">
+          {tripData.map((trip) => (
+            <Trip key={trip._id} data={trip} />
           ))}
         </div>
-      </div>
-    </>
+      )}
+    </Container>
   );
 };
 

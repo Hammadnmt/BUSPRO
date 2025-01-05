@@ -1,11 +1,17 @@
-/* eslint-disable no-unused-vars */
+import React from "react";
 import { useNavigate, Link } from "react-router";
 import { useLoginUserMutation } from "../features/auth/authSlice";
-import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import Loader from "./Loading";
-import { useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Spinner,
+} from "react-bootstrap";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,12 +22,14 @@ const Login = () => {
     reset,
     formState: { errors },
   } = useForm();
-  useEffect(() => {
+
+  React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.accessToken) {
       navigate("/admin/dashboard");
     }
   }, [navigate]);
+
   const onSubmit = async (data, e) => {
     e.preventDefault();
     try {
@@ -38,70 +46,112 @@ const Login = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <Container className="min-vh-100 d-flex align-items-center justify-content-center">
+        <Spinner animation="border" style={{ color: "#364F6B" }} role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </Container>
+    );
+  }
+
   return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <Container className="d-flex justify-content-center align-items-center min-vh-100 min-vw-100">
-          <Row>
-            <Col>
-              <Card className="card">
-                <Card.Body>
-                  <h3 className="text-center mb-4">Login</h3>
-                  <Form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="d-flex flex-column justify-content-center align-items-center"
-                  >
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                      <Form.Control
-                        {...register("email", {
-                          required: "Email is required",
-                          pattern: {
-                            value:
-                              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                            message: "Invalid email format",
-                          },
-                        })}
-                        type="email"
-                        placeholder="Enter your email"
-                        className={errors.name ? "is-invalid" : ""}
-                      />
-                      {errors.email && (
-                        <p className="text-danger">{errors.email.message}</p>
-                      )}
-                    </Form.Group>
+    <Container
+      fluid
+      className="min-vh-100 bg-light d-flex align-items-center justify-content-center p-4"
+    >
+      <Row className="justify-content-center w-100">
+        <Col xs={12} sm={10} md={8} lg={6} xl={5}>
+          <Card className="border-0 shadow-lg">
+            <div className="py-3 px-4" style={{ backgroundColor: "#364F6B" }}>
+              <h2 className="text-white text-center mb-0 fw-bold">
+                Welcome to BusPro
+              </h2>
+            </div>
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                      <Form.Control
-                        {...register("password", {
-                          required: "Password is required",
-                        })}
-                        type="password"
-                        placeholder="Enter your password"
-                        className={errors.name ? "is-invalid" : ""}
-                      />
-                      {errors.password && (
-                        <p className="text-danger">{errors.password.message}</p>
-                      )}
-                    </Form.Group>
+            <Card.Body className="p-4">
+              <h3
+                className="text-center mb-4 fw-semibold"
+                style={{ color: "#364F6B" }}
+              >
+                Login to Your Account
+              </h3>
 
-                    <Button type="submit" variant="primary">
-                      Login
-                    </Button>
-                  </Form>
-                  <Link to={"/"}>
-                    <p className="text-center mt-3 text-decoration-none">
-                      New? Register here!
-                    </p>
-                  </Link>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      )}
-    </>
+              <Form onSubmit={handleSubmit(onSubmit)}>
+                <Form.Group className="mb-3">
+                  <Form.Label style={{ color: "#364F6B" }}>
+                    Email Address
+                  </Form.Label>
+                  <Form.Control
+                    type="email"
+                    isInvalid={!!errors.email}
+                    placeholder="Enter your email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        message: "Invalid email format",
+                      },
+                    })}
+                    style={{
+                      borderColor: errors.email ? "#FC5185" : "#364F6B",
+                    }}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.email?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group className="mb-4">
+                  <Form.Label style={{ color: "#364F6B" }}>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    isInvalid={!!errors.password}
+                    placeholder="Enter your password"
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
+                    style={{
+                      borderColor: errors.password ? "#FC5185" : "#364F6B",
+                    }}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.password?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Button
+                  type="submit"
+                  className="w-100 mb-3"
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: "#364F6B",
+                    borderColor: "#364F6B",
+                  }}
+                >
+                  {isLoading ? "Logging in..." : "Login"}
+                </Button>
+              </Form>
+
+              <div className="text-center">
+                <Link
+                  to="/signup"
+                  style={{
+                    color: "#3FC1C9",
+                    textDecoration: "none",
+                  }}
+                  className="hover-effect"
+                >
+                  New to BusPro? Register here!
+                </Link>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

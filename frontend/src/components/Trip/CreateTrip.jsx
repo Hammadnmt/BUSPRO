@@ -5,7 +5,7 @@ import { useGetBusesQuery } from "../../features/bus/busSlice";
 import { useGetAllroutesQuery } from "../../features/route/routeSlice";
 import Loader from "../Loading";
 import { useForm } from "react-hook-form";
-import { Container, Row, Button, Col, Form, Card } from "react-bootstrap";
+import { Container, Row, Col, Form, Card, Button } from "react-bootstrap";
 import { convertTimeToTimestamp } from "../../utils/helpers";
 import { getCurrentDate } from "../../utils/getCurrenDate";
 
@@ -35,7 +35,7 @@ const CreateTrip = () => {
   });
 
   const onSubmit = async (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     try {
       await createTrip(tripDetails).unwrap();
       reset();
@@ -55,19 +55,17 @@ const CreateTrip = () => {
     }
   }, [isSuccess, navigate]);
 
-  return isLoading || isLoadingRoutes || isLoadingBuses ? (
-    <Loader />
-  ) : (
-    <Container className="trip-form d-flex justify-content-center min-vh-100 min-vw-100">
+  return (
+    <Container
+      fluid
+      className="trip-form d-flex justify-content-center min-vh-100"
+    >
       <Row>
-        <Col>
-          <Card className="trip-card mt-2">
+        <Col md={8} className="mx-auto">
+          <Card className="trip-card mt-2 shadow border-0">
             <Card.Body>
               <h3 className="text-center mb-4">Create Trip</h3>
-              <Form
-                onSubmit={handleSubmit(onSubmit)}
-                className="d-flex flex-column justify-content-center align-items-center"
-              >
+              <Form onSubmit={handleSubmit(onSubmit)}>
                 <Row>
                   <Col sm={6}>
                     <Form.Group className="mb-3">
@@ -232,7 +230,7 @@ const CreateTrip = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                <Button type="submit" variant="success">
+                <Button type="submit" variant="success" disabled={isLoading}>
                   {isLoading ? "Creating..." : "Create Trip"}
                 </Button>
                 {isError && (

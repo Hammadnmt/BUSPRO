@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Form, Row, Col, Container, Card, Button } from "react-bootstrap";
 import { useLocation } from "react-router";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
-import { useGetTripByIdQuery } from "../features/trip/tripSlice"
+import { useGetTripByIdQuery } from "../features/trip/tripSlice";
 import { useCreateBookingMutation } from "../features/booking/bookingSlice";
 import { getUser } from "../utils/getUser";
 
@@ -67,7 +67,7 @@ const ContactForm = () => {
 
   return (
     <Container className="mt-4">
-      <Card>
+      <Card border="primary">
         <Card.Body>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <h4 className="mb-4">Passenger Details</h4>
@@ -182,7 +182,7 @@ const ContactForm = () => {
       </Card>
 
       <Container className="mt-4">
-        <Card>
+        <Card border="primary">
           <Card.Body>
             <h4>Booking Summary</h4>
             <div className="table-responsive mb-4">
@@ -258,7 +258,7 @@ const ContactForm = () => {
 
               <div className="d-flex justify-content-end">
                 <Button
-                  variant="success"
+                  variant="primary" // Using the primary color from the palette
                   size="lg"
                   type="submit"
                   disabled={!selectedPaymentMethod}
@@ -270,7 +270,6 @@ const ContactForm = () => {
           </Card.Body>
         </Card>
       </Container>
-
     </Container>
   );
 };
