@@ -19,7 +19,7 @@ const baseQueryWithAuth = async (args, api, extraOptions) => {
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithAuth,
-  tagTypes: ["User", "Bus", "Route", "Trip"], // Added tags here
+  tagTypes: ["User", "Bus", "Route", "Trip", "Booking"], // Added tags here
   endpoints: () => ({}),
 });
 

@@ -21,10 +21,10 @@ import Booking from "./pages/Booking";
 import BusPage from "./pages/Buses";
 import Home from "./pages/Home";
 
+import BookingReview from "./components/TripReview";
 import RoutePage from "./pages/routes";
 import TripPage from "./pages/TripPage";
 import Users from "./pages/users";
-import BookingReview from "./components/TripReview";
 
 export default function App() {
   return (
@@ -32,14 +32,14 @@ export default function App() {
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route index path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route index path="/signup" element={<Signup />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/review" element={<BookingReview />} />
           <Route path="/book" element={<ContactForm />} />
           <Route path="" element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index path="dashboard" element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="user" element={<Users />} />
               <Route path="bus" element={<BusPage />} />
               <Route path="/admin/bus/create" element={<CreateBus />} />

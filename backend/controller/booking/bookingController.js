@@ -83,7 +83,7 @@ const getBookings = async (req, res, next) => {
 
 const deleteBooking = async (req, res, next) => {
   try {
-    const booking = await Booking.findByIdAndDelete({ user: req.params.id });
+    const booking = await Booking.findByIdAndDelete(req.params.id);
     if (!booking) {
       throw new Error("Booking not found");
     }

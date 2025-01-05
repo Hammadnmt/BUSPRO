@@ -40,8 +40,7 @@ const Signup = () => {
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.accessToken) {
-      // navigate("/admin/dashboard");
-      <Navigate to={"/admin/dashboard"} />
+      navigate("/admin/dashboard");
     }
     if (isSuccess) navigate("/login");
   }, [isSuccess, navigate]);

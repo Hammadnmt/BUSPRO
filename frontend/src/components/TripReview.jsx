@@ -11,17 +11,6 @@ const ReviewTrip = () => {
   const id = state?.id;
   const { data, isLoading, error } = useGetTripByIdQuery(id);
 
-  // // Fallback values to handle missing data
-  // const departureTime = data?.departure_time
-  //   ? extractTime12HourFormat(data.departure_time)
-  //   : "N/A";
-  // const arrivalTime = data?.arrival_time
-  //   ? extractTime12HourFormat(data.arrival_time)
-  //   : "N/A";
-  // const route = data?.Route || {};
-  // const fare = route.fare || 0;
-  // const totalFare = fare * bookedinfo.length;
-
   if (isLoading) {
     return <div className="text-center">Loading trip details...</div>;
   }
