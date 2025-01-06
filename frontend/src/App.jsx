@@ -44,7 +44,7 @@ export default function App() {
           </Route>
           <Route path="" element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route path="dashboard" element={<Dashboard />} />
+              <Route index path="dashboard" element={<Dashboard />} />
               <Route path="user" element={<Users />} />
               <Route path="bus" element={<BusPage />} />
               <Route path="/admin/bus/create" element={<CreateBus />} />

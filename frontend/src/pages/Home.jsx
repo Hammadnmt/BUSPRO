@@ -5,7 +5,7 @@ import TravelSearchForm from "../components/SearchForm";
 function Home() {
   return (
     <div>
-      <Container fluid className="p-0">
+      <Container fluid className="p-0 min-vh-100">
         <TravelSearchForm />
       </Container>
     </div>

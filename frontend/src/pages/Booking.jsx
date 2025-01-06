@@ -19,14 +19,15 @@ function Booking() {
     { header: "Status", key: "status" },
   ];
 
-
   console.log(data);
 
   const transformedData = data?.map((entry) => ({
-    _id:entry._id,
+    _id: entry._id,
     user_name: entry.user ? entry?.user?.name : "N/A",
     bus_no: entry.trip?.Bus?.bus_no || "N/A", // Accessing bus_no from Bus model
-    route: `${entry.trip?.Route?.source || "N/A"} - ${entry.trip?.Route?.destination || "N/A"}`, // Source and destination from Route model
+    route: `${entry.trip?.Route?.source || "N/A"} - ${
+      entry.trip?.Route?.destination || "N/A"
+    }`, // Source and destination from Route model
     travel_date: entry.trip?.travel_date,
     seat_no: entry.booked_seats[0]?.seat_no || "N/A",
     gender: entry.booked_seats[0]?.gender || "N/A",
@@ -41,7 +42,7 @@ function Booking() {
     await deleteBooking(id).unwrap();
   };
   return (
-    <div className="container-fluid d-flex flex-column justify-content-center align-items-center ">
+    <div className="container-fluid bg-light d-flex flex-column justify-content-center align-items-center ">
       <h1>Bookings</h1>
       <ReusableTable
         data={transformedData || []}

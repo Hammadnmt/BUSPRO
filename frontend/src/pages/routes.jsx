@@ -34,7 +34,7 @@ function RoutePage() {
   };
 
   return (
-    <div className="container-fluid d-flex flex-column justify-content-center align-items-center ">
+    <div className="container-fluid bg-light d-flex flex-column justify-content-center align-items-center ">
       <h1>Routes</h1>
       <ReusableTable
         data={data || []}

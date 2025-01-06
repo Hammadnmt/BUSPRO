@@ -32,7 +32,7 @@ function Navigation() {
       onToggle={() => setExpanded(!expanded)}
     >
       <Container>
-        <Navbar.Brand as={Link} to="/admin/dashboard" className="d-flex align-items-center">
+        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           <Bus size={32} style={{ color: "#364F6B" }} className="me-2" />
           <span
             style={{
@@ -49,32 +49,55 @@ function Navigation() {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/admin/dashboard" style={{ color: "#364F6B" }} className="me-3">
+            <Nav.Link
+              as={Link}
+              to="/admin/dashboard"
+              style={{ color: "#364F6B" }}
+              className="me-3"
+            >
               Dashboard
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/user" style={{ color: "#364F6B" }} className="me-3">
+            <Nav.Link
+              as={Link}
+              to="/admin/user"
+              style={{ color: "#364F6B" }}
+              className="me-3"
+            >
               Users
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/bus" style={{ color: "#364F6B" }} className="me-3">
+            <Nav.Link
+              as={Link}
+              to="/admin/bus"
+              style={{ color: "#364F6B" }}
+              className="me-3"
+            >
               Buses
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/route" style={{ color: "#364F6B" }} className="me-3">
+            <Nav.Link
+              as={Link}
+              to="/admin/route"
+              style={{ color: "#364F6B" }}
+              className="me-3"
+            >
               Routes
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/trip" style={{ color: "#364F6B" }} className="me-3">
+            <Nav.Link
+              as={Link}
+              to="/admin/trip"
+              style={{ color: "#364F6B" }}
+              className="me-3"
+            >
               Trips
             </Nav.Link>
-            <Nav.Link as={Link} to="/admin/booking" style={{ color: "#364F6B" }} className="me-3">
+            <Nav.Link
+              as={Link}
+              to="/admin/booking"
+              style={{ color: "#364F6B" }}
+              className="me-3"
+            >
               Bookings
             </Nav.Link>
-            <Button
-              variant="outline-primary"
-              onClick={logoutButton}
-              style={{
-                color: "#364F6B",
-                borderColor: "#364F6B",
-              }}
-            >
+            <Button variant="outline-primary" onClick={logoutButton}>
               Logout
             </Button>
           </Nav>

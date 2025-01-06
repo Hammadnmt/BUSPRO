@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Form, Row, Col, Container, Card, Button } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router";
@@ -8,6 +8,16 @@ import { useCreateBookingMutation } from "../features/booking/bookingSlice";
 import { useLazyGetPromoQuery } from "../features/promo/promoSlice";
 import { getUser } from "../utils/getUser";
 import { toast } from "react-toastify";
+import {
+  User,
+  Mail,
+  Phone,
+  CreditCard,
+  Tag,
+  Users,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 
 const ContactForm = () => {
   const state = useLocation();
@@ -38,6 +48,7 @@ const ContactForm = () => {
       payment_method: "",
     },
   });
+
   const selectedPaymentMethod = watch("payment_method");
   const selectedPromoCode = watch("promoCode")?.length > 7;
 
@@ -48,7 +59,7 @@ const ContactForm = () => {
     } catch (err) {
       promoError?.message
         ? toast.error(promoError.message)
-        : toast.error("Error in Coupen");
+        : toast.error("Error in Coupon");
     }
   };
 
@@ -73,7 +84,7 @@ const ContactForm = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (userdata) {
       setValue("phone_number", userdata?.phone_number || "");
       setValue("email", userdata?.email || "");
@@ -81,159 +92,262 @@ const ContactForm = () => {
       setValue("amount_to_pay", totalFare || "");
     }
     if (promoData?.status) {
-      toast.success("Happy discount😄");
+      toast.success("Happy discount! 🎉");
       setValue("amount_to_pay", totalFare - 400);
     }
     if (isSuccess) {
-      navigate("/confirm"); 
+      navigate("/confirm");
     }
   }, [userdata, setValue, totalFare, promoData, reset, isSuccess, navigate]);
 
   return (
-    <Container className="mt-4">
-      <Card border="primary">
-        <Card.Body>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <h4 className="mb-4">Passenger Details</h4>
+    <Container className="py-5">
+      <div className="mb-4">
+        <h2 className="text-primary mb-2">Complete Your Booking</h2>
+        <p className="text-muted">
+          Please fill in the details to confirm your reservation
+        </p>
+      </div>
 
-            <Row className="mb-4">
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>Mobile Number</Form.Label>
-                  <Controller
-                    name="phone_number"
-                    control={control}
-                    rules={{ required: "Mobile number is required" }}
-                    render={({ field }) => (
-                      <Form.Control
-                        {...field}
-                        type="text"
-                        placeholder="+9203XXXXXXXX"
+      <Row className="g-4">
+        <Col lg={8}>
+          <Card className="shadow-sm mb-4">
+            <Card.Header className="bg-white py-3">
+              <h4 className="mb-0 d-flex align-items-center gap-2">
+                <User size={20} className="text-primary" />
+                Passenger Details
+              </h4>
+            </Card.Header>
+            <Card.Body>
+              <Form onSubmit={handleSubmit(onSubmit)}>
+                <Row className="g-3">
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label className="d-flex align-items-center gap-2">
+                        <Phone size={16} className="text-muted" />
+                        Mobile Number
+                      </Form.Label>
+                      <Controller
+                        name="phone_number"
+                        control={control}
+                        rules={{ required: "Mobile number is required" }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            type="text"
+                            placeholder="+9203XXXXXXXX"
+                            className={
+                              errors.phone_number ? "border-danger" : ""
+                            }
+                          />
+                        )}
                       />
-                    )}
-                  />
-                  {errors.phone_number && (
-                    <Form.Text className="text-danger">
-                      {errors.phone_number.message}
-                    </Form.Text>
-                  )}
-                  <Form.Text className="text-muted">
-                    e.g. +920332023455
-                  </Form.Text>
-                </Form.Group>
-              </Col>
+                      {errors.phone_number && (
+                        <Form.Text className="text-danger d-flex align-items-center gap-1">
+                          <AlertCircle size={14} />
+                          {errors.phone_number.message}
+                        </Form.Text>
+                      )}
+                    </Form.Group>
+                  </Col>
 
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>
-                    Email{" "}
-                    <i className="text-muted">
-                      (your ticket will be emailed here)
-                    </i>
-                  </Form.Label>
-                  <Controller
-                    name="email"
-                    control={control}
-                    rules={{
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Enter a valid email",
-                      },
-                    }}
-                    render={({ field }) => (
-                      <Form.Control
-                        {...field}
-                        type="email"
-                        placeholder="e.g. name@outlook.com"
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label className="d-flex align-items-center gap-2">
+                        <Mail size={16} className="text-muted" />
+                        Email
+                      </Form.Label>
+                      <Controller
+                        name="email"
+                        control={control}
+                        rules={{
+                          required: "Email is required",
+                          pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: "Enter a valid email",
+                          },
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            type="email"
+                            placeholder="name@example.com"
+                            className={errors.email ? "border-danger" : ""}
+                          />
+                        )}
                       />
+                      {errors.email && (
+                        <Form.Text className="text-danger d-flex align-items-center gap-1">
+                          <AlertCircle size={14} />
+                          {errors.email.message}
+                        </Form.Text>
+                      )}
+                      <Form.Text className="text-muted">
+                        Your ticket will be sent to this email
+                      </Form.Text>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={12}>
+                    <Form.Group>
+                      <Form.Label className="d-flex align-items-center gap-2">
+                        <User size={16} className="text-muted" />
+                        Full Name
+                      </Form.Label>
+                      <Controller
+                        name="fullname"
+                        control={control}
+                        rules={{ required: "Full name is required" }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            type="text"
+                            placeholder="Enter your full name"
+                            className={errors.fullname ? "border-danger" : ""}
+                          />
+                        )}
+                      />
+                      {errors.fullname && (
+                        <Form.Text className="text-danger d-flex align-items-center gap-1">
+                          <AlertCircle size={14} />
+                          {errors.fullname.message}
+                        </Form.Text>
+                      )}
+                      <Form.Text className="text-muted">
+                        As it appears on your CNIC
+                      </Form.Text>
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={12}>
+                    <Form.Group className="mb-0">
+                      <Controller
+                        name="agree"
+                        control={control}
+                        rules={{ required: "You must agree to proceed" }}
+                        render={({ field }) => (
+                          <Form.Check
+                            {...field}
+                            type="checkbox"
+                            label="I agree to receive travel related information and deals"
+                            className="user-select-none"
+                          />
+                        )}
+                      />
+                      {errors.agree && (
+                        <Form.Text className="text-danger d-flex align-items-center gap-1">
+                          <AlertCircle size={14} />
+                          {errors.agree.message}
+                        </Form.Text>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col lg={4}>
+          <Card className="shadow-sm">
+            <Card.Header className="bg-white py-3">
+              <h4 className="mb-0 d-flex align-items-center gap-2">
+                <Users size={20} className="text-primary" />
+                Booking Summary
+              </h4>
+            </Card.Header>
+            <Card.Body>
+              <div className="mb-4">
+                <h6 className="text-muted mb-3">Selected Seats</h6>
+                <div className="table-responsive">
+                  <table className="table table-sm">
+                    <thead className="table-light">
+                      <tr>
+                        <th>Seat</th>
+                        <th>Gender</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bookedInfo.map((item, index) => (
+                        <tr key={index}>
+                          <td>
+                            <span className="badge bg-primary">
+                              {item.seatNumber}
+                            </span>
+                          </td>
+                          <td className="text-capitalize">{item.gender}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <Form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-4">
+                  <Form.Group className="mb-3">
+                    <Form.Label className="d-flex align-items-center gap-2">
+                      <Tag size={16} className="text-muted" />
+                      Promo Code
+                    </Form.Label>
+                    <div className="d-flex gap-2">
+                      <Controller
+                        name="promoCode"
+                        control={control}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            placeholder="Enter promo code"
+                            type="text"
+                          />
+                        )}
+                      />
+                      <Button
+                        onClick={applyPromo}
+                        disabled={!selectedPromoCode}
+                        variant="outline-primary"
+                        className="flex-shrink-0"
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="d-flex align-items-center gap-2">
+                      <CreditCard size={16} className="text-muted" />
+                      Payment Method
+                    </Form.Label>
+                    <Controller
+                      name="payment_method"
+                      control={control}
+                      rules={{ required: "Please select a payment method" }}
+                      render={({ field }) => (
+                        <Form.Select
+                          {...field}
+                          className={
+                            errors.payment_method ? "border-danger" : ""
+                          }
+                        >
+                          <option value="">Select payment method</option>
+                          <option value="debit card">Debit Card</option>
+                          <option value="jazzcash">JazzCash</option>
+                        </Form.Select>
+                      )}
+                    />
+                    {errors.payment_method && (
+                      <Form.Text className="text-danger d-flex align-items-center gap-1">
+                        <AlertCircle size={14} />
+                        {errors.payment_method.message}
+                      </Form.Text>
                     )}
-                  />
-                  {errors.email && (
-                    <Form.Text className="text-danger">
-                      {errors.email.message}
-                    </Form.Text>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
+                  </Form.Group>
 
-            <Form.Group className="mb-4">
-              <Controller
-                name="agree"
-                control={control}
-                rules={{ required: "You must agree to proceed" }}
-                render={({ field }) => (
-                  <Form.Check
-                    {...field}
-                    type="checkbox"
-                    label="I agree to receive travel related information and deals"
-                  />
-                )}
-              />
-              {errors.agree && (
-                <Form.Text className="text-danger">
-                  {errors.agree.message}
-                </Form.Text>
-              )}
-            </Form.Group>
-
-            <Row className="mb-4">
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>Full name</Form.Label>
-                  <Controller
-                    name="fullname"
-                    control={control}
-                    rules={{ required: "Full name is required" }}
-                    render={({ field }) => (
-                      <Form.Control {...field} type="text" />
-                    )}
-                  />
-                  {errors.fullname && (
-                    <Form.Text className="text-danger">
-                      {errors.fullname.message}
-                    </Form.Text>
-                  )}
-                  <Form.Text className="text-muted">
-                    Please ensure your name is as it appears on your CNIC
-                  </Form.Text>
-                </Form.Group>
-              </Col>
-            </Row>
-          </Form>
-        </Card.Body>
-      </Card>
-
-      <Container className="mt-4">
-        <Card border="primary">
-          <Card.Body>
-            <h4>Booking Summary</h4>
-            <div className="table-responsive mb-4">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Seat Number</th>
-                    <th>Gender</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bookedInfo.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.seatNumber}</td>
-                      <td>{item.gender}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Second Form */}
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <Row className="mb-4">
-                <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Amount to Pay (Rs.)</Form.Label>
+                    <Form.Label className="d-flex align-items-center gap-2">
+                      <CheckCircle2 size={16} className="text-muted" />
+                      Total Amount
+                    </Form.Label>
                     <Controller
                       name="amount_to_pay"
                       control={control}
@@ -249,85 +363,31 @@ const ContactForm = () => {
                         },
                       }}
                       render={({ field }) => (
-                        <Form.Control {...field} type="number" readOnly />
-                      )}
-                    />
-                    {errors.amount_to_pay && (
-                      <Form.Text className="text-danger">
-                        {errors.amount_to_pay.message}
-                      </Form.Text>
-                    )}
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group>
-                    <Form.Label>Promo Code</Form.Label>
-                    <Controller
-                      name="promoCode"
-                      control={control}
-                      render={({ field }) => (
                         <Form.Control
                           {...field}
-                          placeholder="XXXXX"
-                          type="text"
-                          rules={{
-                            pattern: {
-                              value: /^BUSPR\d3$/,
-                              message: "Enter a valid email",
-                            },
-                          }}
+                          type="number"
+                          readOnly
+                          className="form-control-lg fw-bold"
                         />
                       )}
                     />
-                    <Form.Text className="text-muted">e.g. BUSPR000</Form.Text>
                   </Form.Group>
-                  <Button
-                    onClick={applyPromo}
-                    disabled={!selectedPromoCode}
-                    variant="success"
-                    className="w-25 mt-2 offset-9"
-                  >
-                    Get Discount
-                  </Button>
-                </Col>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Payment Method</Form.Label>
-                    <Controller
-                      name="payment_method"
-                      control={control}
-                      rules={{ required: "Please select a payment method" }}
-                      render={({ field }) => (
-                        <Form.Select {...field}>
-                          <option value="">Select payment method</option>
-                          <option value="debit card">Debit Card</option>
-                          <option value="jazzcash">JazzCash</option>
-                        </Form.Select>
-                      )}
-                    />
-                    {errors.payment_method && (
-                      <Form.Text className="text-danger">
-                        {errors.payment_method.message}
-                      </Form.Text>
-                    )}
-                  </Form.Group>
-                </Col>
-              </Row>
+                </div>
 
-              <div className="d-flex justify-content-end">
                 <Button
-                  variant="primary" // Using the primary color from the palette
+                  variant="primary"
                   size="lg"
                   type="submit"
-                  disabled={!selectedPaymentMethod}
+                  disabled={!selectedPaymentMethod || isLoading}
+                  className="w-100"
                 >
-                  Book
+                  {isLoading ? "Processing..." : "Confirm Booking"}
                 </Button>
-              </div>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Container>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 };

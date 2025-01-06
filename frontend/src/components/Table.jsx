@@ -1,10 +1,9 @@
+import React from "react";
 import { useNavigate } from "react-router";
-import { Button, Table } from "react-bootstrap";
-import Loader from "../components/Loading";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import { Table, Button, Card, Badge } from "react-bootstrap";
+import { Pencil, Trash2, Plus, RefreshCw } from "lucide-react";
 
-export default function ReusableTable({
+const ReusableTable = ({
   data = [],
   columns = [],
   isLoading = false,
@@ -12,94 +11,107 @@ export default function ReusableTable({
   onCreate,
   onDelete,
   onUpdate,
-}) {
+  title = "Data Table",
+}) => {
   const navigate = useNavigate();
 
-  return isLoading && isFetching ? (
-    <Loader />
-  ) : (
-    <div className="container-fluid d-flex flex-column">
-      {onCreate && (
-        <Button
-          variant="success"
-          className="mb-3 w-25"
-          onClick={onCreate}
-          style={{
-            backgroundColor: "#364F6B",
-            borderColor: "#364F6B",
-            color: "white",
-          }}
-        >
-          Add
-        </Button>
-      )}
-      {data.length > 0 ? (
-        <Table
-          striped
-          bordered
-          hover
-          responsive
-          className="table-sm"
-          style={{
-            borderCollapse: "collapse",
-            borderColor: "rgba(54, 79, 107, 0.3)", // Thin and transparent
-          }}
-        >
-          <thead style={{ backgroundColor: "#364F6B", color: "white" }}>
-            <tr>
-              {columns.map((col) => (
-                <th key={col.header} className="px-6 py-3 text-left">
-                  {col.header}
-                </th>
-              ))}
-              <th className="px-6 py-3 text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item) => (
-              <tr
-                key={item._id || item._id?.toString()}
-                style={{ cursor: "pointer" }}
-                className="hover-row"
-              >
-                {columns.map((col) => (
-                  <td key={col.key || col.header} className="px-6 py-4">
-                    {item[col.key]}
-                  </td>
+  if (isLoading && isFetching) {
+    return (
+      <div className="d-flex justify-content-center align-items-center p-5">
+        <RefreshCw className="animate-spin text-primary" size={40} />
+      </div>
+    );
+  }
+
+  return (
+    <Card className="shadow-sm border-0 mb-4">
+      <Card.Header className="bg-white py-3 d-flex justify-content-between align-items-center">
+        <div>
+          <h5 className="mb-0 text-primary fw-bold">{title}</h5>
+          {data.length > 0 && (
+            <small className="text-muted">
+              Showing {data.length} {data.length === 1 ? "entry" : "entries"}
+            </small>
+          )}
+        </div>
+        {onCreate && (
+          <Button
+            variant="primary"
+            className="d-flex align-items-center gap-2 rounded-pill px-4"
+            onClick={onCreate}
+          >
+            <Plus size={18} />
+            <span>Add New</span>
+          </Button>
+        )}
+      </Card.Header>
+
+      <Card.Body className="p-0">
+        {data.length > 0 ? (
+          <div className="table-responsive">
+            <Table hover className="mb-0">
+              <thead>
+                <tr className="bg-light">
+                  {columns.map((col) => (
+                    <th
+                      key={col.header}
+                      className="px-4 py-3 border-0 text-dark"
+                    >
+                      {col.header}
+                    </th>
+                  ))}
+                  <th
+                    className="px-4 py-3 border-0 text-dark text-center"
+                    width="140"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item) => (
+                  <tr
+                    key={item._id || item._id?.toString()}
+                    className="align-middle"
+                  >
+                    {columns.map((col) => (
+                      <td key={col.key || col.header} className="px-4 py-3">
+                        {item[col.key]}
+                      </td>
+                    ))}
+                    <td className="px-4 py-3 text-center">
+                      <div className="d-flex gap-2 justify-content-center">
+                        <Button
+                          variant="light"
+                          size="sm"
+                          className="d-flex align-items-center justify-content-center p-2 rounded-circle"
+                          onClick={() => onUpdate(item._id)}
+                        >
+                          <Pencil size={16} className="text-primary" />
+                        </Button>
+                        <Button
+                          variant="light"
+                          size="sm"
+                          className="d-flex align-items-center justify-content-center p-2 rounded-circle"
+                          onClick={() => onDelete(item._id)}
+                        >
+                          <Trash2 size={16} className="text-danger" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-                <td className="px-6 py-4 d-flex justify-content-around">
-                  <button
-                    type="button"
-                    className="btn btn-sm"
-                    onClick={() => onUpdate(item._id)}
-                    style={{
-                      backgroundColor: "#364F6B",
-                      color: "white",
-                      borderColor: "#364F6B",
-                    }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-sm"
-                    onClick={() => onDelete(item._id)}
-                    style={{
-                      backgroundColor: "rgba(220, 53, 69, 0.85)",
-                      color: "white",
-                      borderColor: "rgba(220, 53, 69, 0.85)",
-                    }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      ) : (
-        <p className="text-muted mt-4">No data available.</p>
-      )}
-    </div>
+              </tbody>
+            </Table>
+          </div>
+        ) : (
+          <div className="text-center py-5">
+            <p className="text-muted mb-0">No data available.</p>
+          </div>
+        )}
+      </Card.Body>
+    </Card>
   );
-}
+};
+
+export default ReusableTable;

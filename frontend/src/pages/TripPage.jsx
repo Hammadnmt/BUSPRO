@@ -42,7 +42,7 @@ function Booking() {
     await deleteTrip(id).unwrap();
   };
   return (
-    <div className="container-fluid d-flex flex-column justify-content-center align-items-center ">
+    <div className="container-fluid bg-light d-flex flex-column justify-content-center align-items-center ">
       <h1>Trips</h1>
       <ReusableTable
         data={transformedData || []}
