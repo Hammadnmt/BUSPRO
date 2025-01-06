@@ -113,9 +113,15 @@ const updateBooking = async (req, res, next) => {
 
 const getBookingByUserId = async (req, res, next) => {
   try {
-    const booking = await Booking.find({ user: req.params.id })
+    const [booking] = await Booking.find({ user: req.params.id })
       .populate("user")
-      .populate("trip");
+      .populate({
+        path: "trip",
+        populate: [
+          { path: "Bus", model: "Bus" },
+          { path: "Route", model: "Route" },
+        ],
+      });
     if (!booking) {
       throw new Error("Booking not found for this user");
     }

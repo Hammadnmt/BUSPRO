@@ -25,6 +25,8 @@ import BookingReview from "./components/TripReview";
 import RoutePage from "./pages/routes";
 import TripPage from "./pages/TripPage";
 import Users from "./pages/users";
+import BookingConfirm from "./components/BookingConfirm";
+import MainLayout from "./components/MainLayout";
 
 export default function App() {
   return (
@@ -32,11 +34,14 @@ export default function App() {
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route index path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/review" element={<BookingReview />} />
-          <Route path="/book" element={<ContactForm />} />
+          <Route element={<MainLayout />}>
+            <Route index path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/review" element={<BookingReview />} />
+            <Route path="/book" element={<ContactForm />} />
+            <Route path="/confirm" element={<BookingConfirm />} />
+          </Route>
           <Route path="" element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="dashboard" element={<Dashboard />} />

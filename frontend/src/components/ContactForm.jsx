@@ -1,23 +1,30 @@
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Form, Row, Col, Container, Card, Button } from "react-bootstrap";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
 import { useGetTripByIdQuery } from "../features/trip/tripSlice";
 import { useCreateBookingMutation } from "../features/booking/bookingSlice";
+import { useLazyGetPromoQuery } from "../features/promo/promoSlice";
 import { getUser } from "../utils/getUser";
+import { toast } from "react-toastify";
 
 const ContactForm = () => {
   const state = useLocation();
+  const navigate = useNavigate();
   const { data: userdata } = useGetUserByIdQuery(getUser());
   const [createBooking, { isLoading, isSuccess, error }] =
     useCreateBookingMutation();
   const { bookedInfo, tripId, totalFare } = state.state;
   const { data: tripData } = useGetTripByIdQuery(tripId);
+  const [triggerQuery, { data: promoData, error: promoError }] =
+    useLazyGetPromoQuery();
+
   const {
     handleSubmit,
     control,
     setValue,
+    reset,
     watch,
     formState: { errors },
   } = useForm({
@@ -31,8 +38,19 @@ const ContactForm = () => {
       payment_method: "",
     },
   });
-
   const selectedPaymentMethod = watch("payment_method");
+  const selectedPromoCode = watch("promoCode")?.length > 7;
+
+  const applyPromo = async () => {
+    const code = watch("promoCode");
+    try {
+      await triggerQuery(code).unwrap();
+    } catch (err) {
+      promoError?.message
+        ? toast.error(promoError.message)
+        : toast.error("Error in Coupen");
+    }
+  };
 
   const onSubmit = async (data) => {
     const bookingDetails = {
@@ -48,7 +66,6 @@ const ContactForm = () => {
       amount: data.amount_to_pay,
       payment_method: data.payment_method,
     };
-    console.log(bookingDetails);
     try {
       await createBooking(bookingDetails).unwrap();
     } catch (err) {
@@ -63,7 +80,14 @@ const ContactForm = () => {
       setValue("fullname", userdata?.name || "");
       setValue("amount_to_pay", totalFare || "");
     }
-  }, [userdata, setValue, totalFare]);
+    if (promoData?.status) {
+      toast.success("Happy discount😄");
+      setValue("amount_to_pay", totalFare - 400);
+    }
+    if (isSuccess) {
+      navigate("/confirm"); 
+    }
+  }, [userdata, setValue, totalFare, promoData, reset, isSuccess, navigate]);
 
   return (
     <Container className="mt-4">
@@ -216,8 +240,12 @@ const ContactForm = () => {
                       rules={{
                         required: "Amount is required",
                         min: {
-                          value: totalFare,
-                          message: `Amount must be at least ${totalFare} Rs.`,
+                          value: promoData?.status
+                            ? totalFare - 400
+                            : totalFare,
+                          message: `Amount must be at least ${
+                            promoData?.status ? totalFare - 400 : totalFare
+                          } Rs.`,
                         },
                       }}
                       render={({ field }) => (
@@ -231,7 +259,37 @@ const ContactForm = () => {
                     )}
                   </Form.Group>
                 </Col>
-
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Promo Code</Form.Label>
+                    <Controller
+                      name="promoCode"
+                      control={control}
+                      render={({ field }) => (
+                        <Form.Control
+                          {...field}
+                          placeholder="XXXXX"
+                          type="text"
+                          rules={{
+                            pattern: {
+                              value: /^BUSPR\d3$/,
+                              message: "Enter a valid email",
+                            },
+                          }}
+                        />
+                      )}
+                    />
+                    <Form.Text className="text-muted">e.g. BUSPR000</Form.Text>
+                  </Form.Group>
+                  <Button
+                    onClick={applyPromo}
+                    disabled={!selectedPromoCode}
+                    variant="success"
+                    className="w-25 mt-2 offset-9"
+                  >
+                    Get Discount
+                  </Button>
+                </Col>
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Payment Method</Form.Label>

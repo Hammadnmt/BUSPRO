@@ -10,6 +10,7 @@ const busRouter = require("./routes/busRoute");
 const bookingRouter = require("./routes/bookingRoute");
 const userRouter = require("./routes/userRoute");
 const routeRouter = require("./routes/routeRoute");
+const promoRouter = require("./routes/promoRoute");
 const morgen = require("morgan");
 const cookieParser = require("cookie-parser");
 const validateJsonBody = require("./middleware/validJson");
@@ -41,6 +42,7 @@ app.use("/api/user", userRouter);
 app.use("/api/route", routeRouter);
 app.use("/api/bus", busRouter);
 app.use("/api/trip", tripRouter);
+app.use("/api/promo", promoRouter);
 app.use("/api/booking", bookingRouter);
 
 app.use(errorHandler);

@@ -35,7 +35,6 @@ const CreateTrip = () => {
   });
 
   const onSubmit = async (e) => {
-    e.preventDefault();
     try {
       await createTrip(tripDetails).unwrap();
       reset();

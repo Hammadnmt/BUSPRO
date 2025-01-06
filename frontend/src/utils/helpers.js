@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 
 export const extractTime12HourFormat = (isoString) => {
+  if (!isoString) return null;
   const formattedTime = format(new Date(isoString), "hh:mm a");
   return formattedTime;
 };
@@ -18,4 +19,9 @@ export const convertTimeToTimestamp = (time) => {
   today.setSeconds(0); // Ensure seconds are set to 0
 
   return today.getTime();
+};
+
+export const Capitalize = (text) => {
+  if (!text) return "";
+  return text.toUpperCase();
 };

@@ -6,7 +6,7 @@ const ProtectedRoute = () => {
     user.role == "Admin" ? (
       <Outlet />
     ) : (
-      <Navigate to="/home" />
+      <Navigate to="/" />
     )
   ) : (
     <Navigate to="/login" />
