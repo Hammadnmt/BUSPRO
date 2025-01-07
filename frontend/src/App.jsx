@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import { lazy, Suspense } from "react";
 import ControlledTabsExample from "./components/UserInformation";
+import UserRoute from "./components/UserRoutes";
 
 // Lazy-loaded components
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
@@ -38,15 +39,16 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={<FallbackScreen />}>
           <Routes>
-            {/* Public Routes */}
-            <Route element={<MainLayout />}>
-              <Route path="/profile" element={<ControlledTabsExample />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/review" element={<BookingReview />} />
-              <Route path="/book" element={<ContactForm />} />
-              <Route path="/confirm" element={<BookingConfirm />} />
+            <Route element={<UserRoute />}>
+              <Route path="" element={<MainLayout />}>
+                <Route path="/profile" element={<ControlledTabsExample />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/review" element={<BookingReview />} />
+                <Route path="/book" element={<ContactForm />} />
+                <Route path="/confirm" element={<BookingConfirm />} />
+              </Route>
             </Route>
 
             {/* Protected Routes */}
