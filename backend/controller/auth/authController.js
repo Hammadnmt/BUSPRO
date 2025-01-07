@@ -26,6 +26,7 @@ const login = async (req, res, next) => {
 
 const signup = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { name, email, password, role, phone_number } = req.body;
     const userExist = await User.findOne({ email: email });
     if (userExist) {

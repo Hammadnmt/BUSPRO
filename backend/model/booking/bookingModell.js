@@ -39,8 +39,8 @@ const BookingSchema = new mongoose.Schema(
     status: {
       type: String,
       lowercase: true,
-      enum: ["paid", "unpaid"],
-      default: "unpaid",
+      enum: ["active", "inactive"],
+      default: "active",
     },
   },
   {

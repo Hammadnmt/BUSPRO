@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate, Navigate, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { useRegisterUserMutation } from "../features/auth/authSlice";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {
   Container,
   Row,
@@ -16,34 +16,34 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
+  const [registerUser, { isLoading, isSuccess, error: serverError }] =
+    useRegisterUserMutation();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  console.log(serverError);
   const onSubmit = async (formData) => {
     try {
       await registerUser(formData).unwrap();
       toast.success("Registered");
     } catch (err) {
       console.log(err);
-      if (err?.message) {
-        toast.error(err?.message);
-      } else {
-        toast.error("An error occurred. Try again later.");
-      }
     }
   };
 
   React.useEffect(() => {
+    if (serverError) {
+      toast.error(serverError?.message);
+    }
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.accessToken) {
       navigate("/admin/dashboard");
     }
+
     if (isSuccess) navigate("/login");
-  }, [isSuccess, navigate]);
+  }, [isSuccess, navigate, serverError]);
 
   if (isLoading) {
     return (
@@ -60,7 +60,6 @@ const Signup = () => {
       fluid
       className="min-vh-100 bg-light d-flex align-items-center justify-content-center p-4"
     >
-      <ToastContainer />
       <Row className="justify-content-center w-100">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Card className="border-0 shadow-lg">

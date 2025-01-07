@@ -28,7 +28,7 @@ function Booking() {
     route: `${entry.trip?.Route?.source || "N/A"} - ${
       entry.trip?.Route?.destination || "N/A"
     }`, // Source and destination from Route model
-    travel_date: entry.trip?.travel_date,
+    travel_date: entry.trip?.travel_date.split("T")[0],
     seat_no: entry.booked_seats[0]?.seat_no || "N/A",
     gender: entry.booked_seats[0]?.gender || "N/A",
     status: entry.trip?.status || "N/A", // Status from Trip model

@@ -2,6 +2,7 @@ const User = require("../../model/user/userModel");
 const Trip = require("../../model/trip/tripModel");
 const Booking = require("../../model/booking/bookingModell");
 const Payment = require("../../model/payment/paymentModel");
+const sendEmail = require("../email/emailService");
 
 const createBooking = async (req, res, next) => {
   try {
@@ -53,6 +54,7 @@ const createBooking = async (req, res, next) => {
           status: true,
           message: "Booking created successfully",
         });
+        sendEmail(userdata?.email);
       }
     }
   } catch (error) {
@@ -113,7 +115,7 @@ const updateBooking = async (req, res, next) => {
 
 const getBookingByUserId = async (req, res, next) => {
   try {
-    const [booking] = await Booking.find({ user: req.params.id })
+    const booking = await Booking.find({ user: req.params.id })
       .populate("user")
       .populate({
         path: "trip",
@@ -122,13 +124,15 @@ const getBookingByUserId = async (req, res, next) => {
           { path: "Route", model: "Route" },
         ],
       });
-    if (!booking) {
+    console.log(booking);
+    if (booking.length == 0) {
       throw new Error("Booking not found for this user");
+    } else {
+      res.status(200).json({
+        status: "success",
+        data: booking,
+      });
     }
-    res.status(200).json({
-      status: "success",
-      data: booking,
-    });
   } catch (error) {
     next(error);
   }
