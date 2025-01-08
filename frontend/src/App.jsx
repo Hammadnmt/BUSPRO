@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import { lazy, Suspense } from "react";
-import ControlledTabsExample from "./components/UserInformation";
+import Profile from "./components/UserInformation";
 import UserRoute from "./components/UserRoutes";
 import UpdateUser from "./components/Users/UpdateUser";
 import DataTable from "./components/DataTable";
@@ -49,7 +49,7 @@ export default function App() {
             <Route path="/data" element={<NewTable />} />
             <Route element={<UserRoute />}>
               <Route path="" element={<MainLayout />}>
-                <Route path="/profile" element={<ControlledTabsExample />} />
+                <Route path="/profile" element={<Profile />} />
                 <Route path="/review" element={<BookingReview />} />
                 <Route path="/book" element={<ContactForm />} />
                 <Route path="/confirm" element={<BookingConfirm />} />
