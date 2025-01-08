@@ -1,6 +1,6 @@
 const Trip = require("../../model/trip/tripModel");
 const Route = require("../../model/Route/routeModel");
-const getTimePlusMinutes = require("../../utils/getCustomTime");
+const { today, toISO, customTime } = require("../../utils/dateTimeHelpers");
 
 const getTrips = async (req, res, next) => {
   try {
@@ -20,6 +20,7 @@ const getTrips = async (req, res, next) => {
 const getTripByRoute = async (req, res, next) => {
   try {
     const { to, from, date } = req.query;
+    console.log(date);
     const routedata = await Route.find({ source: from, destination: to });
     if (routedata.length == 0) {
       return res.status(404).json({
@@ -29,18 +30,18 @@ const getTripByRoute = async (req, res, next) => {
     }
     const routeIds = routedata.map((route) => route._id);
     let tripdata;
-    if (date !== new Date().getTime()) {
+    if (date !== today()) {
       tripdata = await Trip.find({
         Route: { $in: routeIds },
-        travel_date: { $eq: date },
+        travel_date: { $eq: toISO(date) },
       })
         .populate("Bus")
         .populate("Route");
     } else {
       tripdata = await Trip.find({
         Route: { $in: routeIds },
-        travel_date: { $eq: date },
-        departure_time: { $gte: getTimePlusMinutes(30) },
+        travel_date: { $eq: toISO(date) },
+        departure_time: { $gte: customTime(30) },
       })
         .populate("Bus")
         .populate("Route");
@@ -95,17 +96,12 @@ const getTrip = async (req, res, next) => {
 
 const createTrip = async (req, res, next) => {
   try {
-    const { arrival_time, departure_time } = req.body;
-    if (departure_time >= arrival_time) {
-      throw new Error(
-        "Departure Time cannot be same or greater than Arrival Time"
-      );
-    }
+    console.log(req.body);
     const tripdata = await Trip.create(req.body);
     if (!tripdata) {
       throw new Error("Unable to create Trip");
     }
-    console.log(tripdata);
+    // console.log(tripdata);
     res.json({
       status: true,
       message: "Trip created Successfully",

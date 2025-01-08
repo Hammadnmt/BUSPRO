@@ -83,7 +83,7 @@ const TravelSearchForm = () => {
       const result = await triggerQuery({
         to: formData.to,
         from: formData.from,
-        date: new Date(formData.date).getTime(),
+        date: formData.date,
       }).unwrap();
 
       if (result.length === 0) {

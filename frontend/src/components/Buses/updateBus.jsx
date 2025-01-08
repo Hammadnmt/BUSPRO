@@ -53,60 +53,93 @@ const UpdateBus = () => {
   }
 
   return (
-    <Container fluid className="d-flex justify-content-center min-vh-100">
-      <Row className="justify-content-center">
-        <Col xs={12} md={6} lg={4}>
-          <Card className="shadow border-0">
-            <Card.Body>
-              <h3 className="text-center mb-4">Bus Details</h3>
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder="Bus number"
-                    {...register("busNumber", {
-                      required: "Bus Number is required",
-                    })}
-                    className={errors.busNumber ? "is-invalid" : ""}
-                  />
-                  {errors.busNumber && (
-                    <small className="text-danger">
-                      {errors.busNumber.message}
-                    </small>
-                  )}
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Control
-                    type="number"
-                    placeholder="Total Seats"
-                    {...register("seats", {
-                      required: "Total seats is required",
-                      pattern: {
-                        value: /^[0-9]+$/,
-                        message: "Total Seats must be a number",
-                      },
-                    })}
-                    className={errors.seats ? "is-invalid" : ""}
-                  />
-                  {errors.seats && (
-                    <small className="text-danger">
-                      {errors.seats.message}
-                    </small>
-                  )}
-                </Form.Group>
-                <Button type="submit" variant="success" disabled={isLoading}>
-                  {isLoading ? "Updating..." : "Update"}
-                </Button>
-                {error && (
-                  <small className="text-danger mt-3 text-center">
-                    {error?.data?.message}
-                  </small>
-                )}
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+    <Container fluid>
+      <div className="d-flex justify-content-center min-vh-100">
+        <Row className="w-50">
+          <Col>
+            <Card className="mt-2 shadow w-100 border-0">
+              <Card.Body>
+                <h3
+                  className="text-center mb-4"
+                  style={{ color: "#364F6B", fontWeight: "bold" }}
+                >
+                  Update Bus
+                </h3>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                  <Row>
+                    <Col>
+                      <Form.Group className="mb-3">
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter Bus number"
+                          {...register("busNumber", {
+                            required: "Bus number is required",
+                          })}
+                          className={errors.busNumber ? "is-invalid" : ""}
+                          style={{
+                            borderColor: "#364F6B",
+                            boxShadow: errors.busNumber
+                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
+                              : "none",
+                          }}
+                        />
+                        {errors.busNumber && (
+                          <small className="text-danger">
+                            {errors.busNumber.message}
+                          </small>
+                        )}
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Control
+                          type="number"
+                          placeholder="Enter Total Seats"
+                          {...register("seats", {
+                            required: "Total seats is required",
+                            pattern: {
+                              value: /^[0-9]+$/,
+                              message: "Total Seats must be a number",
+                            },
+                          })}
+                          className={errors.seats ? "is-invalid" : ""}
+                          style={{
+                            borderColor: "#364F6B",
+                            boxShadow: errors.seats
+                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
+                              : "none",
+                          }}
+                        />
+                        {errors.seats && (
+                          <small className="text-danger">
+                            {errors.seats.message}
+                          </small>
+                        )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <Row className="w-50 offset-3">
+                    <Button
+                      type="submit"
+                      variant="success"
+                      disabled={isLoading}
+                      style={{
+                        backgroundColor: "#364F6B",
+                        borderColor: "#364F6B",
+                      }}
+                    >
+                      {isLoading ? "Updating..." : "Update"}
+                    </Button>
+                    {error && (
+                      <small className="text-danger mt-3">
+                        {error?.data?.message || "Failed to update bus"}
+                      </small>
+                    )}
+                  </Row>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
     </Container>
   );
 };

@@ -50,15 +50,15 @@ const UserNavbar = () => {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            {user?.accessToken && user?.role === "Admin" ? (
+            {user && user?.role == "User" ? (
               <>
                 <Nav.Link
                   as={Link}
-                  to="/admin/dashboard"
+                  to="/profile"
                   style={{ color: "#364F6B" }}
                   className="me-3"
                 >
-                  Admin
+                  Profile
                 </Nav.Link>
                 <Button
                   onClick={logoutButton}
@@ -71,39 +71,18 @@ const UserNavbar = () => {
                   Logout
                 </Button>
               </>
-            ) : user?.accessToken && user?.role === "User" ? (
+            ) : (
               <Button
-                onClick={logoutButton}
+                as={Link}
+                to={"/login"}
                 style={{
                   backgroundColor: "#364F6B",
                   borderColor: "#364F6B",
                 }}
                 className="px-4"
               >
-                Logout
+                Login
               </Button>
-            ) : (
-              <>
-                <Nav.Link
-                  as={Link}
-                  to="/login"
-                  style={{ color: "#364F6B" }}
-                  className="me-3"
-                >
-                  Login
-                </Nav.Link>
-                <Button
-                  as={Link}
-                  to="/signup"
-                  style={{
-                    backgroundColor: "#364F6B",
-                    borderColor: "#364F6B",
-                  }}
-                  className="px-4"
-                >
-                  Register
-                </Button>
-              </>
             )}
           </Nav>
         </Navbar.Collapse>

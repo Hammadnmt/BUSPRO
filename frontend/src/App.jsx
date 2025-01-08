@@ -6,6 +6,9 @@ import "./App.css";
 import { lazy, Suspense } from "react";
 import ControlledTabsExample from "./components/UserInformation";
 import UserRoute from "./components/UserRoutes";
+import UpdateUser from "./components/Users/UpdateUser";
+import DataTable from "./components/DataTable";
+import NewTable from "./components/DataTable";
 
 // Lazy-loaded components
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
@@ -39,23 +42,26 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={<FallbackScreen />}>
           <Routes>
+            {/* User Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/data" element={<NewTable />} />
             <Route element={<UserRoute />}>
               <Route path="" element={<MainLayout />}>
                 <Route path="/profile" element={<ControlledTabsExample />} />
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
                 <Route path="/review" element={<BookingReview />} />
                 <Route path="/book" element={<ContactForm />} />
                 <Route path="/confirm" element={<BookingConfirm />} />
               </Route>
             </Route>
 
-            {/* Protected Routes */}
+            {/* Admin Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index path="dashboard" element={<Dashboard />} />
                 <Route path="user" element={<Users />} />
+                <Route path="user/:id" element={<UpdateUser />} />
                 <Route path="bus" element={<BusPage />} />
                 <Route path="bus/create" element={<CreateBus />} />
                 <Route path="bus/:id" element={<UpdateBus />} />
@@ -68,8 +74,6 @@ export default function App() {
                 <Route path="booking" element={<Booking />} />
               </Route>
             </Route>
-
-            {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

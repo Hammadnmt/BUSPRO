@@ -1,14 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useCreateTripMutation } from "../../features/trip/tripSlice";
 import { useGetBusesQuery } from "../../features/bus/busSlice";
 import { useGetAllroutesQuery } from "../../features/route/routeSlice";
-import Loader from "../Loading";
 import { useForm } from "react-hook-form";
-import { Container, Row, Col, Form, Card, Button } from "react-bootstrap";
-import { convertTimeToTimestamp } from "../../utils/helpers";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Card,
+  Button,
+  Toast,
+} from "react-bootstrap";
 import { getCurrentDate } from "../../utils/getCurrenDate";
-
+import { toISO, getTime } from "../../utils/dateTimeHelpers";
+import { toast } from "react-toastify";
 const CreateTrip = () => {
   const navigate = useNavigate();
   const { data: routedata, isLoading: isLoadingRoutes } =
@@ -16,6 +23,7 @@ const CreateTrip = () => {
   const { data: busdata, isLoading: isLoadingBuses } = useGetBusesQuery();
   const [createTrip, { isLoading, isSuccess, isError, error }] =
     useCreateTripMutation();
+
   const {
     register,
     handleSubmit,
@@ -24,26 +32,22 @@ const CreateTrip = () => {
     formState: { errors },
   } = useForm();
 
-  const [tripDetails, setTripDetails] = useState({
-    Bus: "",
-    Route: "",
-    travel_date: "",
-    departure_time: "",
-    arrival_time: "",
-    description: "",
-    status: "Inactive",
-  });
-
-  const onSubmit = async (e) => {
+  const onSubmit = async (data) => {
+    const tripData = {
+      Bus: data.Bus,
+      Route: data.Route,
+      travel_date: toISO(data.travel_date),
+      description: data.description,
+      departure_time: getTime(data.travel_date, data.departure_time),
+      arrival_time: getTime(data.travel_date, data.arrival_time),
+    };
     try {
-      await createTrip(tripDetails).unwrap();
+      await createTrip(tripData).unwrap();
       reset();
     } catch (err) {
       console.log(err);
-      if (err?.data?.errors) {
-        Object.keys(err.data.errors).forEach((key) =>
-          setError(key, { type: "server", message: err.data.errors[key] })
-        );
+      if (error?.message) {
+        toast.error(error.message);
       }
     }
   };
@@ -76,19 +80,7 @@ const CreateTrip = () => {
                           {...register("Bus", {
                             required: "Bus number is required",
                           })}
-                          onChange={(e) =>
-                            setTripDetails((prev) => ({
-                              ...prev,
-                              Bus: e.target.value,
-                            }))
-                          }
                           className={errors.Bus ? "is-invalid" : ""}
-                          style={{
-                            borderColor: "#364F6B",
-                            boxShadow: errors.Bus
-                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
-                              : "none",
-                          }}
                         >
                           <option value="">Select Bus Number</option>
                           {busdata &&
@@ -112,19 +104,7 @@ const CreateTrip = () => {
                           {...register("Route", {
                             required: "Route is required",
                           })}
-                          onChange={(e) =>
-                            setTripDetails((prev) => ({
-                              ...prev,
-                              Route: e.target.value,
-                            }))
-                          }
                           className={errors.Route ? "is-invalid" : ""}
-                          style={{
-                            borderColor: "#364F6B",
-                            boxShadow: errors.Route
-                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
-                              : "none",
-                          }}
                         >
                           <option value="">Select Route</option>
                           {routedata &&
@@ -152,19 +132,7 @@ const CreateTrip = () => {
                           {...register("travel_date", {
                             required: "Travel date is required",
                           })}
-                          onChange={(e) =>
-                            setTripDetails((prev) => ({
-                              ...prev,
-                              travel_date: new Date(e.target.value).getTime(),
-                            }))
-                          }
                           className={errors.travel_date ? "is-invalid" : ""}
-                          style={{
-                            borderColor: "#364F6B",
-                            boxShadow: errors.travel_date
-                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
-                              : "none",
-                          }}
                         />
                         {errors.travel_date && (
                           <small className="text-danger">
@@ -181,21 +149,7 @@ const CreateTrip = () => {
                           {...register("departure_time", {
                             required: "Departure time is required",
                           })}
-                          onChange={(e) => {
-                            setTripDetails((prev) => ({
-                              ...prev,
-                              departure_time: convertTimeToTimestamp(
-                                e.target.value
-                              ),
-                            }));
-                          }}
                           className={errors.departure_time ? "is-invalid" : ""}
-                          style={{
-                            borderColor: "#364F6B",
-                            boxShadow: errors.departure_time
-                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
-                              : "none",
-                          }}
                         />
                         {errors.departure_time && (
                           <small className="text-danger">
@@ -214,21 +168,7 @@ const CreateTrip = () => {
                           {...register("arrival_time", {
                             required: "Arrival time is required",
                           })}
-                          onChange={(e) => {
-                            setTripDetails((prev) => ({
-                              ...prev,
-                              arrival_time: convertTimeToTimestamp(
-                                e.target.value
-                              ),
-                            }));
-                          }}
                           className={errors.arrival_time ? "is-invalid" : ""}
-                          style={{
-                            borderColor: "#364F6B",
-                            boxShadow: errors.arrival_time
-                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
-                              : "none",
-                          }}
                         />
                         {errors.arrival_time && (
                           <small className="text-danger">
@@ -246,19 +186,7 @@ const CreateTrip = () => {
                           {...register("description", {
                             required: "Description is required",
                           })}
-                          onChange={(e) =>
-                            setTripDetails((prev) => ({
-                              ...prev,
-                              description: e.target.value,
-                            }))
-                          }
                           className={errors.description ? "is-invalid" : ""}
-                          style={{
-                            borderColor: "#364F6B",
-                            boxShadow: errors.description
-                              ? "0 0 5px 2px rgba(255, 0, 0, 0.5)"
-                              : "none",
-                          }}
                         />
                         {errors.description && (
                           <small className="text-danger">

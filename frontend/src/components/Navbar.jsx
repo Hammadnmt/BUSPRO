@@ -32,7 +32,11 @@ function Navigation() {
       onToggle={() => setExpanded(!expanded)}
     >
       <Container>
-        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
+        <Navbar.Brand
+          as={Link}
+          to="/admin/dashboard"
+          className="d-flex align-items-center"
+        >
           <Bus size={32} style={{ color: "#364F6B" }} className="me-2" />
           <span
             style={{

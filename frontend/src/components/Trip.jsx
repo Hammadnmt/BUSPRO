@@ -16,7 +16,6 @@ import { Clock, MapPin, Info } from "lucide-react";
 import { useGetBookingsByTripIdQuery } from "../features/booking/bookingSlice";
 import { transformSeatsData } from "../utils/transformSeatsData";
 import { extractTime12HourFormat } from "../utils/helpers";
-
 // Constants
 const COLORS = {
   primary: "#364F6B",
@@ -105,6 +104,7 @@ const Trip = ({ data }) => {
     );
   };
 
+  const user = JSON.parse(localStorage.getItem("user"));
   // Render helpers
   const renderSeatLegend = () => (
     <div className="d-flex gap-4 mb-4">
@@ -244,7 +244,7 @@ const Trip = ({ data }) => {
               {bookedInfo.length > 0 && (
                 <Button
                   as={Link}
-                  to="/review"
+                  to={user ? "/review" : "/login"}
                   state={{ bookedInfo, id: data?._id }}
                   style={{
                     backgroundColor: COLORS.secondary,

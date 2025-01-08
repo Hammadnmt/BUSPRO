@@ -19,7 +19,7 @@ function db() {
             // Update bookings where travel_date has passed or is today
             const result = await Booking.updateMany(
               {
-                travel_date: { $lte: new Date() },
+                travel_date: { $lt: new Date() },
                 status: { $eq: "active" },
               },
               { $set: { status: "inactive" } }

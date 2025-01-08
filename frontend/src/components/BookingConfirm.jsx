@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { useNavigate } from "react-router";
 import { MoveRight, Bus } from "lucide-react";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
@@ -9,11 +9,15 @@ import { Capitalize, extractTime12HourFormat } from "../utils/helpers";
 export default function BookingConfirm() {
   const navigate = useNavigate();
   const { data: userdata } = useGetUserByIdQuery(getUser());
-  const { data: bookingData } = useGetBookingByUserIdQuery(getUser());
+  const { data: bookingData, isLoading } = useGetBookingByUserIdQuery(
+    getUser()
+  );
   setTimeout(() => {
     navigate("/");
   }, 6000);
-
+  if (isLoading) {
+    return <p>....loading</p>;
+  }
   return (
     <>
       <div className="container p-0  shadow-lg mt-3 border border-2 rounded-3 w-50">
@@ -26,7 +30,9 @@ export default function BookingConfirm() {
                 <b>CONFIRMED!</b>
               </p>
               <p className="mb-0">
-                {Capitalize(bookingData?.trip?.Route?.source || "")}{" "}
+                {bookingData
+                  ? Capitalize(bookingData?.trip?.Route?.source)
+                  : " "}
                 <MoveRight />{" "}
                 {Capitalize(bookingData?.trip?.Route?.destination)}
               </p>

@@ -1,16 +1,15 @@
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router-dom";
+
 const UserRoute = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  // console.log(user);
-  return user ? (
-    user.role == "User" ? (
-      <Outlet />
-    ) : (
-      <Navigate to="/admin/dashboard" />
-    )
-  ) : (
-    <Navigate to="/login" />
-  );
+  // const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user")); // Retrieve user from localStorage
+
+  if (!user) return <Navigate to="/" />;
+  if (user.role === "Admin") return <Navigate to="/admin/dashboard" />;
+  if (user.role === "User") return <Outlet />;
+
+  // Default fallback (if role doesn't match)
+  return <Navigate to="/" />;
 };
 
 export default UserRoute;
