@@ -17,7 +17,7 @@ export default function InActiveBooking() {
     <>
       <div className="mx-auto">
         {bookingData?.map((booking) => (
-          <Booking key={booking._id} {...booking} />
+          <Booking key={booking._id} data={booking} />
         ))}
       </div>
     </>

@@ -16,7 +16,7 @@ export default function ActiveBooking() {
   return (
     <>
       {bookingData?.map((booking) => (
-        <Booking key={booking._id} {...booking} />
+        <Booking key={booking._id} data={booking} isActive={true} />
       ))}
     </>
   );

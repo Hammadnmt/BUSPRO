@@ -123,8 +123,9 @@ const getBookingByUserId = async (req, res, next) => {
           { path: "Bus", model: "Bus" },
           { path: "Route", model: "Route" },
         ],
-      });
-    console.log(booking);
+      })
+      .sort({ travel_date: "desc" });
+
     if (booking.length == 0) {
       throw new Error("Booking not found for this user");
     } else {

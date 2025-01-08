@@ -357,9 +357,8 @@ const ContactForm = () => {
                           value: promoData?.status
                             ? totalFare - 400
                             : totalFare,
-                          message: `Amount must be at least ${
-                            promoData?.status ? totalFare - 400 : totalFare
-                          } Rs.`,
+                          message: `Amount must be at least ${promoData?.status ? totalFare - 400 : totalFare
+                            } Rs.`,
                         },
                       }}
                       render={({ field }) => (
@@ -375,6 +374,11 @@ const ContactForm = () => {
                 </div>
 
                 <Button
+                  as={Link}
+                  to="/confirm"
+                  state={{
+                    bookedInfo
+                  }}
                   variant="primary"
                   size="lg"
                   type="submit"

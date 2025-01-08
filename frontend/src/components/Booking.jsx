@@ -3,14 +3,14 @@ import { Card, Col, Container, Row, Badge } from "react-bootstrap";
 import { Bus, Clock, MapPin, Calendar, ArrowRight } from "lucide-react";
 import { extractTime12HourFormat } from "../utils/helpers";
 
-export default function Booking({ data }) {
+export default function Booking({ data, isActive }) {
+  console.log(data);
   return (
     <Container>
-      <Row className="justify-content-center">
+      <Row className="justify-content-center" >
         <Col lg={8}>
           <Card className="border-0 shadow-lg mb-4">
             <Card.Body className="p-4">
-              {/* Header Section */}
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <div className="d-flex align-items-center gap-2">
                   <div className="bg-primary bg-opacity-10 p-2 rounded-circle">
@@ -18,9 +18,16 @@ export default function Booking({ data }) {
                   </div>
                   <h4 className="mb-0 text-primary">Daewoo Express</h4>
                 </div>
-                <Badge bg="success" className="px-3 py-2">
-                  Active
-                </Badge>
+                {isActive ? (
+                  <Badge bg="success" className="px-3 py-2">
+                    Active
+                  </Badge>
+                ) : (
+                  <Badge bg="danger" className="px-3 py-2">
+                    InActive
+                  </Badge>
+                )
+                }
               </div>
 
               {/* Journey Time */}
@@ -95,24 +102,31 @@ export default function Booking({ data }) {
               </div>
 
               {/* Feature Badges */}
-              <div className="d-flex gap-2 mt-4">
-                <Badge
-                  bg="warning"
-                  className="px-3 py-2 d-flex align-items-center gap-2"
-                >
-                  <span className="fw-normal">Luxury</span>
-                </Badge>
-                <Badge
-                  bg="success"
-                  className="px-3 py-2 d-flex align-items-center gap-2"
-                >
-                  <span className="fw-normal">Refundable</span>
-                </Badge>
-              </div>
+              {isActive ? (
+
+                <div className="d-flex gap-2 mt-4">
+                  <Badge
+                    bg="warning"
+                    className="px-3 py-2 d-flex align-items-center gap-2"
+                  >
+                    <span className="fw-normal">Luxury</span>
+                  </Badge>
+                  <Badge
+                    bg="success"
+                    className="px-3 py-2 d-flex align-items-center gap-2"
+                  >
+                    <span className="fw-normal">Refundable</span>
+                  </Badge>
+                </div>
+              ) : (
+                ""
+              )
+
+              }
             </Card.Body>
           </Card>
         </Col>
       </Row>
-    </Container>
+    </Container >
   );
 }

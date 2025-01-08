@@ -13,13 +13,14 @@ export default function BookingConfirm() {
   const { data: bookingData, isLoading } = useGetBookingByUserIdQuery(
     getUser()
   );
+  console.log(bookingData)
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/");
-    }, 6000);
-    return () => clearTimeout(timer);
-  }, [navigate]);
+  // React.useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     navigate("/");
+  //   }, 6000);
+  //   return () => clearTimeout(timer);
+  // }, [navigate]);
 
   if (isLoading) {
     return (
