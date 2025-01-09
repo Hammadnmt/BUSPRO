@@ -11,7 +11,6 @@ export default function InActiveBooking() {
     return <p>Loading...</p>;
   }
   const bookingData = getInActiveBookings(data);
-  console.log(bookingData);
 
   return (
     <>

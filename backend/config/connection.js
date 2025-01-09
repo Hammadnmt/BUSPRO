@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const nodecron = require("node-cron");
 const Booking = require("../model/booking/bookingModell");
+const { toISO, today, customTime } = require("../utils/dateTimeHelpers");
 
 function db() {
   mongoose
@@ -19,7 +20,8 @@ function db() {
             // Update bookings where travel_date has passed or is today
             const result = await Booking.updateMany(
               {
-                travel_date: { $lt: new Date() },
+                travel_date: { $lte: toISO(today()) },
+                "trip.departure_time":{$lt:customTime(30)}
                 status: { $eq: "active" },
               },
               { $set: { status: "inactive" } }

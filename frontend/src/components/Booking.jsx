@@ -4,10 +4,9 @@ import { Bus, Clock, MapPin, Calendar, ArrowRight } from "lucide-react";
 import { extractTime12HourFormat } from "../utils/helpers";
 
 export default function Booking({ data, isActive }) {
-  console.log(data);
   return (
     <Container>
-      <Row className="justify-content-center" >
+      <Row className="justify-content-center">
         <Col lg={8}>
           <Card className="border-0 shadow-lg mb-4">
             <Card.Body className="p-4">
@@ -26,8 +25,7 @@ export default function Booking({ data, isActive }) {
                   <Badge bg="danger" className="px-3 py-2">
                     InActive
                   </Badge>
-                )
-                }
+                )}
               </div>
 
               {/* Journey Time */}
@@ -103,7 +101,6 @@ export default function Booking({ data, isActive }) {
 
               {/* Feature Badges */}
               {isActive ? (
-
                 <div className="d-flex gap-2 mt-4">
                   <Badge
                     bg="warning"
@@ -120,13 +117,11 @@ export default function Booking({ data, isActive }) {
                 </div>
               ) : (
                 ""
-              )
-
-              }
+              )}
             </Card.Body>
           </Card>
         </Col>
       </Row>
-    </Container >
+    </Container>
   );
 }
