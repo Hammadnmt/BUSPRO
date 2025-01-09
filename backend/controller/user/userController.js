@@ -21,10 +21,34 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
+const getPaginatedUsers = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  try {
+    const users = await User.find().skip(skip).limit(limit);
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+    if (users.length == 0) {
+      res.status(200).json({
+        status: true,
+        data: [],
+      });
+      throw new Error("No User Found");
+    } else {
+      res.status(201).json({
+        status: true,
+        data: { users, totalPages },
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 //get user
 const getOneUser = async (req, res, next) => {
   try {
-    console.log(req.params.id);
     const userdata = await User.findById(req.params.id);
     if (userdata == null) {
       throw new Error("No User Found");
@@ -82,4 +106,5 @@ module.exports = {
   getOneUser,
   deleteUser,
   updateUser,
+  getPaginatedUsers,
 };

@@ -1,15 +1,26 @@
 import ReusableTable from "../components/Table";
 import { useNavigate } from "react-router";
 import {
-  useGetTripsQuery,
+  useGetPaginatedTripsQuery,
   useDeleteTripMutation,
 } from "../features/trip/tripSlice";
 import { extractTime12HourFormat } from "../utils/helpers";
+import { useState } from "react";
+import Pagination from "../components/pagination";
 
-function Booking() {
-  const { data, isLoading, isFetching } = useGetTripsQuery();
-  const [deleteTrip] = useDeleteTripMutation();
+function TripPage() {
+  const [Page, setPage] = useState(1);
   const navigate = useNavigate();
+  const { data, isLoading, isFetching } = useGetPaginatedTripsQuery({
+    page: Page,
+    limit: 10,
+  });
+  const [deleteTrip] = useDeleteTripMutation();
+  if (isLoading) {
+    return <p>Loading</p>;
+  }
+  const { trips, totalPages } = data;
+
   const columns = [
     { header: "Bus number", key: "bus_no" },
     { header: "Source", key: "source" },
@@ -20,7 +31,7 @@ function Booking() {
     { header: "Status", key: "status" },
   ];
 
-  const transformedData = data?.map((entry) => ({
+  const transformedData = trips?.map((entry) => ({
     _id: entry._id,
     ID: entry._id,
     bus_no: entry.Bus?.bus_no || "N/A",
@@ -53,8 +64,13 @@ function Booking() {
         onUpdate={handleEdit}
         onDelete={handleDelete}
       />
+      <Pagination
+        currentPage={Page}
+        totalPages={totalPages}
+        onPageChange={(newPage) => setPage(newPage)}
+      />
     </div>
   );
 }
 
-export default Booking;
+export default TripPage;

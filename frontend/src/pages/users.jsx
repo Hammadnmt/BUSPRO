@@ -1,17 +1,27 @@
 /* eslint-disable no-unused-vars */
 import ReusableTable from "../components/Table"; // Adjust the import path as needed
 import {
-  useGetAllusersQuery,
+  useGetPaginatedUsersQuery,
   useDeleteUserMutation,
 } from "../features/user/userSlice";
 import { useNavigate } from "react-router";
 import "../App.css";
+import { useState } from "react";
+import Pagination from "../components/pagination";
 
-function Products() {
-  const { data, isLoading, isSuccess, isFetching, isError, error } =
-    useGetAllusersQuery();
-  const [deleteUser] = useDeleteUserMutation();
+function Users() {
+  const [Page, setPage] = useState(1);
   const navigate = useNavigate();
+  const { data, isLoading, isFetching } = useGetPaginatedUsersQuery({
+    page: Page,
+    limit: 10,
+  });
+  const [deleteUser] = useDeleteUserMutation();
+
+  if (isLoading) {
+    return <p>Loading</p>;
+  }
+  const { users, totalPages } = data;
 
   const columns = [
     { header: "Name", key: "name" },
@@ -32,15 +42,20 @@ function Products() {
     <div className="container-fluid bg-light d-flex flex-column justify-content-center align-items-center ">
       <h1>Users</h1>
       <ReusableTable
-        data={data || []}
+        data={users || []}
         columns={columns}
         isLoading={isLoading}
         isFetching={isFetching}
         onUpdate={handleEdit}
         onDelete={handleDelete}
       />
+      <Pagination
+        currentPage={Page}
+        totalPages={totalPages}
+        onPageChange={(newPage) => setPage(newPage)}
+      />
     </div>
   );
 }
 
-export default Products;
+export default Users;

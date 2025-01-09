@@ -6,14 +6,19 @@ const {
   getOneUser,
   updateUser,
   deleteUser,
+  getPaginatedUsers,
 } = require("../controller/user/userController");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
 router.route("/").get(authMiddleware, roleMiddleware, getAllUsers);
-router.route("/:id").get(getOneUser);
-router.route("/:id").put(authMiddleware, roleMiddleware, updateUser);
-router.route("/:id").delete(authMiddleware, roleMiddleware, deleteUser);
+
+router.route("/user").get(authMiddleware, roleMiddleware, getPaginatedUsers);
+router
+  .route("/:id")
+  .get(authMiddleware, getOneUser)
+  .put(authMiddleware, roleMiddleware, updateUser)
+  .delete(authMiddleware, roleMiddleware, deleteUser);
 
 module.exports = router;

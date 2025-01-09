@@ -11,6 +11,14 @@ export const userApi = baseApi.injectEndpoints({
       providesTags: ["User"],
       transformResponse: (response, meta, arg) => response.data,
     }),
+    getPaginatedUsers: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/user/user/?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["User"],
+      transformResponse: (response, meta, arg) => response.data,
+    }),
     deleteUser: builder.mutation({
       query: (id) => ({
         url: `/user/${id}`,
@@ -47,4 +55,5 @@ export const {
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useGetPaginatedUsersQuery,
 } = userApi;

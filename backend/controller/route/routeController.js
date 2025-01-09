@@ -21,6 +21,32 @@ const getAllRoutes = async (req, res, next) => {
   }
 };
 
+const getPaginatedRoutes = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1; // Default to page 1
+  const limit = parseInt(req.query.limit) || 10; // Default to 10 items per pag
+  const skip = (page - 1) * limit;
+  try {
+    const routes = await Route.find().skip(skip).limit(limit);
+    const totalRoutes = await Route.countDocuments();
+    const totalPages = Math.ceil(totalRoutes / limit);
+
+    if (routes.length == 0) {
+      res.status(200).json({
+        status: true,
+        data: [],
+      });
+      throw new Error("No Route Found");
+    } else {
+      res.status(201).json({
+        status: true,
+        data: { routes, totalPages },
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 //get Route
 const getOneRoute = async (req, res, next) => {
   try {
@@ -96,4 +122,5 @@ module.exports = {
   getOneRoute,
   updateRoute,
   deleteRoute,
+  getPaginatedRoutes,
 };

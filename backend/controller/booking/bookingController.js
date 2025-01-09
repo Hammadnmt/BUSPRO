@@ -6,9 +6,9 @@ const sendEmail = require("../email/emailService");
 
 const createBooking = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { user, trip, travel_date, booked_seats, amount, payment_method } =
       req.body;
+    console.log(req.body);
     const userdata = await User.findById(user);
     if (!userdata) return res.status(404).json({ error: "User not found" });
 
@@ -52,7 +52,7 @@ const createBooking = async (req, res, next) => {
       } else {
         res.status(201).json({
           status: true,
-          message: "Booking created successfully",
+          data: booking._id,
         });
         sendEmail(userdata?.email);
       }
@@ -77,6 +77,36 @@ const getBookings = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPaginatedBookings = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1; // Default to page 1
+  const limit = parseInt(req.query.limit) || 10; // Default to 10 items per pag
+  const skip = (page - 1) * limit;
+  try {
+    const booking = await Booking.find()
+      .populate("user")
+      .populate({
+        path: "trip",
+        populate: [
+          { path: "Bus", model: "Bus" },
+          { path: "Route", model: "Route" },
+        ],
+      })
+      .skip(skip)
+      .limit(limit);
+    const totalBookings = await Booking.countDocuments();
+    const totalPages = Math.ceil(totalBookings / limit);
+    res.status(200).json({
+      status: "success",
+      data: {
+        booking,
+        totalPages,
+      },
     });
   } catch (error) {
     next(error);
@@ -115,7 +145,39 @@ const updateBooking = async (req, res, next) => {
 
 const getBookingByUserId = async (req, res, next) => {
   try {
-    const booking = await Booking.find({ user: req.params.id })
+    const booking = await Booking.find({
+      user: req.params.id,
+    })
+      .populate("user")
+      .populate({
+        path: "trip",
+        populate: [
+          { path: "Bus", model: "Bus" },
+          { path: "Route", model: "Route" },
+        ],
+      })
+      .sort({ travel_date: "desc" });
+
+    if (booking.length == 0) {
+      throw new Error("Booking not found for this user");
+    } else {
+      res.status(200).json({
+        status: "success",
+        data: booking,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getBookingByUserIdRouteId = async (req, res, next) => {
+  const { id, bookId } = req.query;
+  try {
+    const booking = await Booking.find({
+      user: id,
+      _id: bookId,
+    })
       .populate("user")
       .populate({
         path: "trip",
@@ -173,4 +235,6 @@ module.exports = {
   getBookingByTripId,
   updateBooking,
   deleteBooking,
+  getBookingByUserIdRouteId,
+  getPaginatedBookings,
 };

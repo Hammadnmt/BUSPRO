@@ -17,10 +17,33 @@ const getTrips = async (req, res, next) => {
   }
 };
 
+const getPaginatedTrips = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1; // Default to page 1
+  const limit = parseInt(req.query.limit) || 10; // Default to 10 items per pag
+  const skip = (page - 1) * limit;
+  try {
+    const trips = await Trip.find()
+      .populate("Route")
+      .populate("Bus")
+      .skip(skip)
+      .limit(limit);
+    const totalTrips = await Route.countDocuments();
+    const totalPages = Math.ceil(totalTrips / limit);
+    if (!trips) {
+      throw new Error("Trips not found");
+    }
+    res.json({
+      status: "success",
+      data: { trips, totalPages },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getTripByRoute = async (req, res, next) => {
   try {
     const { to, from, date } = req.query;
-    console.log(date);
     const routedata = await Route.find({ source: from, destination: to });
     if (routedata.length == 0) {
       return res.status(404).json({
@@ -77,14 +100,12 @@ const getTripsBydate = async (req, res, next) => {
 
 const getTrip = async (req, res, next) => {
   try {
-    console.log(req.params.id);
     const trip = await Trip.findById(req.params.id)
       .populate("Bus")
       .populate("Route");
     if (!trip) {
       throw new Error("Trip not found");
     }
-    console.log(trip);
     res.status(200).json({
       status: true,
       data: trip,
@@ -96,7 +117,6 @@ const getTrip = async (req, res, next) => {
 
 const createTrip = async (req, res, next) => {
   try {
-    console.log(req.body);
     const tripdata = await Trip.create(req.body);
     if (!tripdata) {
       throw new Error("Unable to create Trip");
@@ -151,4 +171,5 @@ module.exports = {
   updateTrip,
   getTripByRoute,
   getTripsBydate,
+  getPaginatedTrips,
 };

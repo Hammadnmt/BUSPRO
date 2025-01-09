@@ -33,6 +33,26 @@ const getBuses = async (req, res, next) => {
   }
 };
 
+const getPaginatedBuses = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1; // Default to page 1
+  const limit = parseInt(req.query.limit) || 10; // Default to 10 items per pag
+  const skip = (page - 1) * limit;
+  try {
+    const buses = await Bus.find().skip(skip).limit(limit);
+    const totalBuses = await Bus.countDocuments();
+    const totalPages = Math.ceil(totalBuses / limit);
+    if (!buses) {
+      throw new Error("No Bus Found");
+    }
+    res.json({
+      status: true,
+      data: { buses, totalPages },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateBus = async (req, res, next) => {
   try {
     const { busNumber, total_seats } = req.body;
@@ -93,4 +113,5 @@ module.exports = {
   updateBus,
   deleteBus,
   getBuses,
+  getPaginatedBuses,
 };

@@ -8,6 +8,7 @@ const {
   updateTrip,
   getTripByRoute,
   getTripsBydate,
+  getPaginatedTrips,
 } = require("../controller/trip/tripController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -15,7 +16,10 @@ const roleMiddleware = require("../middleware/roleMiddleware");
 
 router.route("/create").post(authMiddleware, roleMiddleware, createTrip);
 router.route("/search").get(getTripByRoute);
+
 router.route("/").get(getTrips);
+router.route("/trip").get(authMiddleware, roleMiddleware, getPaginatedTrips);
+
 router
   .route("/:id")
   .get(getTrip)

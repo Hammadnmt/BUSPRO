@@ -21,6 +21,15 @@ const bookApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    getPaginatedBookings: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/booking/booking/?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Booking"],
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
     deleteBooking: builder.mutation({
       query: (id) => ({
         url: `/booking/${id}`,
@@ -57,6 +66,15 @@ const bookApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    getBookingByUserIdRouteId: builder.query({
+      query: ({ id, bookId }) => ({
+        url: `/booking/user/?id=${id}&bookId=${bookId}`,
+        method: "GET",
+      }),
+      providesTags: ["Booking"],
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
   }),
 });
 
@@ -67,4 +85,6 @@ export const {
   useUpdateBookingMutation,
   useGetBookingByUserIdQuery,
   useGetBookingsByTripIdQuery,
+  useGetBookingByUserIdRouteIdQuery,
+  useGetPaginatedBookingsQuery,
 } = bookApi;

@@ -1,27 +1,20 @@
-import React from "react";
-import { useNavigate } from "react-router";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router";
 import { CheckCircle2, MoveRight, Bus, Mail, Clock } from "lucide-react";
 import { Container, Row, Col, Card, Alert } from "react-bootstrap";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
-import { useGetBookingByUserIdQuery } from "../features/booking/bookingSlice";
+import { useGetBookingByUserIdRouteIdQuery } from "../features/booking/bookingSlice";
 import { getUser } from "../utils/getUser";
 import { Capitalize, extractTime12HourFormat } from "../utils/helpers";
 
 export default function BookingConfirm() {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const { data: userData } = useGetUserByIdQuery(getUser());
-  const { data: bookingData, isLoading } = useGetBookingByUserIdQuery(
-    getUser()
-  );
-  console.log(bookingData)
-
-  // React.useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     navigate("/");
-  //   }, 6000);
-  //   return () => clearTimeout(timer);
-  // }, [navigate]);
-
+  const { data: bookingData, isLoading } = useGetBookingByUserIdRouteIdQuery({
+    id: getUser(),
+    bookId: state.bookId,
+  });
   if (isLoading) {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
@@ -66,8 +59,10 @@ export default function BookingConfirm() {
                         <div>
                           <small className="text-muted d-block">Route</small>
                           <span className="fw-bold">
-                            {Capitalize(bookingData?.trip?.Route?.source)} →{" "}
-                            {Capitalize(bookingData?.trip?.Route?.destination)}
+                            {Capitalize(bookingData[0]?.trip?.Route?.source)} →{" "}
+                            {Capitalize(
+                              bookingData[0]?.trip?.Route?.destination
+                            )}
                           </span>
                         </div>
                       </div>
@@ -79,11 +74,11 @@ export default function BookingConfirm() {
                           <small className="text-muted d-block">Time</small>
                           <span className="fw-bold">
                             {extractTime12HourFormat(
-                              bookingData?.trip?.departure_time
+                              bookingData[0]?.trip?.departure_time
                             )}{" "}
                             →{" "}
                             {extractTime12HourFormat(
-                              bookingData?.trip?.arrival_time
+                              bookingData[0]?.trip?.arrival_time
                             )}
                           </span>
                         </div>

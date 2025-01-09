@@ -1,27 +1,37 @@
 import ReusableTable from "../components/Table";
 import { useNavigate } from "react-router";
 import {
-  useGetBookingsQuery,
+  useGetPaginatedBookingsQuery,
   useDeleteBookingMutation,
 } from "../features/booking/bookingSlice";
+import { useEffect, useState } from "react";
+import Pagination from "../components/pagination";
 
 function Booking() {
-  const { data, isLoading, isFetching } = useGetBookingsQuery();
-  const [deleteBooking] = useDeleteBookingMutation();
+  const [Page, setPage] = useState(1);
   const navigate = useNavigate();
+
+  const { data, isLoading, isFetching } = useGetPaginatedBookingsQuery({
+    page: Page,
+    limit: 10,
+  });
+  const [deleteBooking] = useDeleteBookingMutation();
+
+  if (isLoading) {
+    return <p>Loading</p>;
+  }
+  const { booking, totalPages } = data;
   const columns = [
     { header: "Name", key: "user_name" },
-    { header: "Bus", key: "bus_no" }, // Updated to bus_no based on Bus model
-    { header: "Route", key: "route" }, // This can be updated to show source-destination pair
+    { header: "Bus", key: "bus_no" },
+    { header: "Route", key: "route" },
     { header: "Travel Date", key: "travel_date" },
     { header: "Seat Number", key: "seat_no" },
     { header: "Gender", key: "gender" },
     { header: "Status", key: "status" },
   ];
 
-  console.log(data);
-
-  const transformedData = data?.map((entry) => ({
+  const transformedData = booking?.map((entry) => ({
     _id: entry._id,
     user_name: entry.user ? entry?.user?.name : "N/A",
     bus_no: entry.trip?.Bus?.bus_no || "N/A", // Accessing bus_no from Bus model
@@ -51,6 +61,11 @@ function Booking() {
         isFetching={isFetching}
         onUpdate={handleEdit}
         onDelete={handleDelete}
+      />
+      <Pagination
+        currentPage={Page}
+        totalPages={totalPages}
+        onPageChange={(newPage) => setPage(newPage)}
       />
     </div>
   );

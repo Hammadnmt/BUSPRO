@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Form, Row, Col, Container, Card, Button } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useGetUserByIdQuery } from "../features/user/userSlice";
 import { useGetTripByIdQuery } from "../features/trip/tripSlice";
 import { useCreateBookingMutation } from "../features/booking/bookingSlice";
@@ -23,7 +23,7 @@ const ContactForm = () => {
   const state = useLocation();
   const navigate = useNavigate();
   const { data: userdata } = useGetUserByIdQuery(getUser());
-  const [createBooking, { isLoading, isSuccess, error }] =
+  const [createBooking, { data: bookId, isLoading, isSuccess, error }] =
     useCreateBookingMutation();
   const { bookedInfo, tripId, totalFare } = state.state;
   const { data: tripData } = useGetTripByIdQuery(tripId);
@@ -52,38 +52,6 @@ const ContactForm = () => {
   const selectedPaymentMethod = watch("payment_method");
   const selectedPromoCode = watch("promoCode")?.length > 7;
 
-  const applyPromo = async () => {
-    const code = watch("promoCode");
-    try {
-      await triggerQuery(code).unwrap();
-    } catch (err) {
-      promoError?.message
-        ? toast.error(promoError.message)
-        : toast.error("Error in Coupon");
-    }
-  };
-
-  const onSubmit = async (data) => {
-    const bookingDetails = {
-      user: userdata?._id,
-      trip: tripId,
-      booked_seats: [
-        {
-          seat_no: bookedInfo.map((item) => item.seatNumber),
-          gender: bookedInfo.map((item) => item.gender),
-        },
-      ],
-      travel_date: tripData?.travel_date,
-      amount: data.amount_to_pay,
-      payment_method: data.payment_method,
-    };
-    try {
-      await createBooking(bookingDetails).unwrap();
-    } catch (err) {
-      console.error("Failed to create booking: ", err);
-    }
-  };
-
   React.useEffect(() => {
     if (userdata) {
       setValue("phone_number", userdata?.phone_number || "");
@@ -96,9 +64,48 @@ const ContactForm = () => {
       setValue("amount_to_pay", totalFare - 400);
     }
     if (isSuccess) {
-      navigate("/confirm");
+      navigate("/confirm", {
+        state: {
+          bookId,
+        },
+      });
     }
-  }, [userdata, setValue, totalFare, promoData, reset, isSuccess, navigate]);
+  }, [userdata, setValue, totalFare, promoData, reset, isSuccess]);
+
+  const applyPromo = async () => {
+    const code = watch("promoCode");
+    try {
+      await triggerQuery(code).unwrap();
+    } catch (err) {
+      promoError?.message
+        ? toast.error(promoError.message)
+        : toast.error("Error in Coupon");
+    }
+  };
+  // const { bookId } = bookingData;
+  // console.log(bookingData);
+  // console.log(tripData);
+
+  const onSubmit = async (data) => {
+    try {
+      const bookingDetails = {
+        user: userdata?._id,
+        trip: tripId,
+        booked_seats: [
+          {
+            seat_no: bookedInfo.map((item) => item.seatNumber),
+            gender: bookedInfo.map((item) => item.gender),
+          },
+        ],
+        travel_date: tripData?.travel_date,
+        amount: data.amount_to_pay,
+        payment_method: data.payment_method,
+      };
+      await createBooking(bookingDetails).unwrap();
+    } catch (err) {
+      console.error("Failed to create booking: ", err);
+    }
+  };
 
   return (
     <Container className="py-5">
@@ -357,8 +364,9 @@ const ContactForm = () => {
                           value: promoData?.status
                             ? totalFare - 400
                             : totalFare,
-                          message: `Amount must be at least ${promoData?.status ? totalFare - 400 : totalFare
-                            } Rs.`,
+                          message: `Amount must be at least ${
+                            promoData?.status ? totalFare - 400 : totalFare
+                          } Rs.`,
                         },
                       }}
                       render={({ field }) => (
@@ -374,11 +382,6 @@ const ContactForm = () => {
                 </div>
 
                 <Button
-                  as={Link}
-                  to="/confirm"
-                  state={{
-                    bookedInfo
-                  }}
                   variant="primary"
                   size="lg"
                   type="submit"

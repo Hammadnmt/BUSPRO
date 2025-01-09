@@ -12,6 +12,15 @@ export const routeApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    getPaginatedRoutes: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/route/route/?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Route"], // Provide "Route" cache for all routes
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
     createRoute: builder.mutation({
       query: (data) => ({
         url: "/route/create/",
@@ -59,4 +68,5 @@ export const {
   useGetRouteByIdQuery,
   useDeleteRouteMutation,
   useUpdateRouteMutation,
+  useGetPaginatedRoutesQuery,
 } = routeApi;

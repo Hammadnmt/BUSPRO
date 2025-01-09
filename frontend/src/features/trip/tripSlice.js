@@ -22,6 +22,15 @@ const tripApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    getPaginatedTrips: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/trip/trip/?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Trip"], // Provide "Trip" cache for trips
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
     getTripById: builder.query({
       query: (id) => ({
         url: `/trip/${id}`,
@@ -68,5 +77,6 @@ export const {
   useGetTripByIdQuery,
   useDeleteTripMutation,
   useUpdateTripMutation,
+  useGetPaginatedTripsQuery,
   useLazyGetTripByRouteQuery,
 } = tripApi;

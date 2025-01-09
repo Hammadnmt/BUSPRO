@@ -22,6 +22,15 @@ const busApi = baseApi.injectEndpoints({
       transformResponse: (response, meta, arg) => response.data,
       transformErrorResponse: (response, meta, arg) => response.data,
     }),
+    getPaginatedBuses: builder.query({
+      query: ({ page, limit }) => ({
+        url: `/bus/bus/?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Bus"], // Provide cache for all buses
+      transformResponse: (response, meta, arg) => response.data,
+      transformErrorResponse: (response, meta, arg) => response.data,
+    }),
     getBusById: builder.query({
       query: (id) => ({
         url: `/bus/${id}`,
@@ -59,4 +68,5 @@ export const {
   useDeleteBusMutation,
   useUpdateBusMutation,
   useGetBusByIdQuery,
+  useGetPaginatedBusesQuery,
 } = busApi;
