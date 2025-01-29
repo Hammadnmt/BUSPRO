@@ -66,29 +66,6 @@ A bus ticket booking system that allows passengers to book tickets by providing 
 
 ## Database Models
 
-### Route Model
-```javascript
-const RouteSchema = new mongoose.Schema({
-  source: String,
-  destination: String,
-  distance: Number,
-  duration: Number,
-  fare: Number
-});
-```
-
-### Promo Code Model
-```javascript
-const PromoCodeSchema = new mongoose.Schema({
-  code: String,
-  discountType: String,
-  discountValue: Number,
-  validity: { start: Date, end: Date },
-  applicableRoutes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Route" }],
-  isActive: Boolean
-});
-```
-
 ## Future Enhancements
 - Implement a payment gateway.
 - Add user authentication and role-based access.
