@@ -11,25 +11,20 @@ function db() {
       const task = nodecron.schedule(
         "*/1 * * * *", // Runs every minute for testing
         async () => {
-          console.log(
-            "Running Cron at:",
-            new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" })
-          );
+          console.log("Running Cron at:", new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" }));
 
           try {
             // Update bookings where travel_date has passed or is today
             const result = await Booking.updateMany(
               {
                 travel_date: { $lte: toISO(today()) },
-                "trip.departure_time":{$lt:customTime(30)}
+                "trip.departure_time": { $lt: customTime(30) },
                 status: { $eq: "active" },
               },
               { $set: { status: "inactive" } }
             );
 
-            console.log(
-              `Cron Success: Updated ${result.modifiedCount} bookings.`
-            );
+            console.log(`Cron Success: Updated ${result.modifiedCount} bookings.`);
           } catch (error) {
             console.error("Error while executing cron job:", error);
           }

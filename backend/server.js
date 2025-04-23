@@ -18,17 +18,9 @@ const errorHandler = require("./middleware/errorMiddleware");
 const cors = require("cors");
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://buspro-bgjy.vercel.app/",
   credentials: true,
 };
-// mongoose
-//   .connect("mongodb://localhost:27017/Project")
-//   .then((result) => {
-//     console.log(`Db connected`);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
 db();
 app.use(cors(corsOptions));
 app.use(express.json());
