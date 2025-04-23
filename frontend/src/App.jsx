@@ -7,13 +7,12 @@ import { lazy, Suspense } from "react";
 import Profile from "./components/UserInformation";
 import UserRoute from "./components/UserRoutes";
 import UpdateUser from "./components/Users/UpdateUser";
-import DataTable from "./components/DataTable";
 import NewTable from "./components/DataTable";
 
 // Lazy-loaded components
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const CreateBus = lazy(() => import("./components/Buses/CreateBus"));
-const UpdateBus = lazy(() => import("./components/Buses/UpdateBus"));
+const UpdateBus = lazy(() => import("./components/Buses/updateBus"));
 const ContactForm = lazy(() => import("./components/ContactForm"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const Login = lazy(() => import("./components/Login"));
