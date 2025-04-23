@@ -1,4 +1,3 @@
-import { body } from "express-validator";
 import { baseApi } from "../baseApi";
 
 export const promoApi = baseApi.injectEndpoints({
