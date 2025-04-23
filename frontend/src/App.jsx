@@ -21,7 +21,7 @@ const CreateRoute = lazy(() => import("./components/Routes/CreateRoute"));
 const UpdateRoute = lazy(() => import("./components/Routes/UpdateRoute"));
 const Signup = lazy(() => import("./components/Signup"));
 const CreateTrip = lazy(() => import("./components/Trip/CreateTrip"));
-const UpdateTrip = lazy(() => import("./components/Trip/UpdateTrip"));
+const UpdateTrip = lazy(() => import("./components/Trip/updateTrip"));
 const NotFound = lazy(() => import("./pages/404"));
 const Booking = lazy(() => import("./pages/Booking"));
 const BusPage = lazy(() => import("./pages/Buses"));
