@@ -18,7 +18,7 @@ const Dashboard = lazy(() => import("./components/Dashboard"));
 const Login = lazy(() => import("./components/Login"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoutes"));
 const CreateRoute = lazy(() => import("./components/Routes/CreateRoute"));
-const UpdateRoute = lazy(() => import("./components/Routes/UpdateRoute"));
+const UpdateRoute = lazy(() => import("./components/Routes/updateRoute"));
 const Signup = lazy(() => import("./components/Signup"));
 const CreateTrip = lazy(() => import("./components/Trip/CreateTrip"));
 const UpdateTrip = lazy(() => import("./components/Trip/updateTrip"));
