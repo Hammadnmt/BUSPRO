@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 // import { logout } from "./auth/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://buspro-backend-production.up.railway.app",
+  baseUrl: "https://buspro-backend-production.up.railway.app/api",
   credentials: "include",
 });
 
