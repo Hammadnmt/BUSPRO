@@ -9,7 +9,7 @@ const genToken = (data) => {
         role: data.role,
       },
     },
-    "abc$123%xyz^098",
+    process.env.JWT_SCRT,
     { expiresIn: "2d" }
   );
   return accessToken;
