@@ -18,7 +18,7 @@ const errorHandler = require("./middleware/errorMiddleware");
 const cors = require("cors");
 
 const corsOptions = {
-  origin: "https://buspro-bgjy.vercel.app/",
+  origin: "http://localhost:5173",
   credentials: true,
 };
 db();
