@@ -154,24 +154,6 @@ const Signup = () => {
                     {errors.phone_number?.message}
                   </Form.Control.Feedback>
                 </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <Form.Label style={{ color: "#364F6B" }}>
-                    Account Type
-                  </Form.Label>
-                  <Form.Select
-                    isInvalid={!!errors.role}
-                    {...register("role", { required: "Role is required" })}
-                  >
-                    <option value="">Select Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="User">User</option>
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {errors.role?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
                 <Button
                   type="submit"
                   className="w-100 mb-3"
