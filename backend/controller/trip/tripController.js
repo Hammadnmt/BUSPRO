@@ -22,11 +22,7 @@ const getPaginatedTrips = async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10; // Default to 10 items per pag
   const skip = (page - 1) * limit;
   try {
-    const trips = await Trip.find()
-      .populate("Route")
-      .populate("Bus")
-      .skip(skip)
-      .limit(limit);
+    const trips = await Trip.find().populate("Route").populate("Bus").skip(skip).limit(limit);
     const totalTrips = await Route.countDocuments();
     const totalPages = Math.ceil(totalTrips / limit);
     if (!trips) {
@@ -100,9 +96,7 @@ const getTripsBydate = async (req, res, next) => {
 
 const getTrip = async (req, res, next) => {
   try {
-    const trip = await Trip.findById(req.params.id)
-      .populate("Bus")
-      .populate("Route");
+    const trip = await Trip.findById(req.params.id).populate("Bus").populate("Route");
     if (!trip) {
       throw new Error("Trip not found");
     }
