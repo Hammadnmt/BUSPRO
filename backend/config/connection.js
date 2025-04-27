@@ -18,11 +18,14 @@ function db() {
             const result = await Booking.updateMany(
               {
                 travel_date: { $lte: toISO(today()) },
-                "trip.departure_time": { $lt: customTime(30) },
+                // "trip.departure_time": { $lt: customTime(30) },
                 status: { $eq: "active" },
               },
               { $set: { status: "inactive" } }
-            );
+            ).populate({
+              path: "Trip",
+              match: { departure_time: { $lt: customTime(30) } },
+            });
 
             console.log(`Cron Success: Updated ${result.modifiedCount} bookings.`);
           } catch (error) {

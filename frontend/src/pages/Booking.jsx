@@ -1,10 +1,7 @@
 import ReusableTable from "../components/Table";
 import { useNavigate } from "react-router";
-import {
-  useGetPaginatedBookingsQuery,
-  useDeleteBookingMutation,
-} from "../features/booking/bookingSlice";
-import { useEffect, useState } from "react";
+import { useGetPaginatedBookingsQuery, useDeleteBookingMutation } from "../features/booking/bookingSlice";
+import { useState } from "react";
 import Pagination from "../components/pagination";
 
 function Booking() {
@@ -35,9 +32,7 @@ function Booking() {
     _id: entry._id,
     user_name: entry.user ? entry?.user?.name : "N/A",
     bus_no: entry.trip?.Bus?.bus_no || "N/A", // Accessing bus_no from Bus model
-    route: `${entry.trip?.Route?.source || "N/A"} - ${
-      entry.trip?.Route?.destination || "N/A"
-    }`, // Source and destination from Route model
+    route: `${entry.trip?.Route?.source || "N/A"} - ${entry.trip?.Route?.destination || "N/A"}`, // Source and destination from Route model
     travel_date: entry.trip?.travel_date.split("T")[0],
     seat_no: entry.booked_seats[0]?.seat_no || "N/A",
     gender: entry.booked_seats[0]?.gender || "N/A",
@@ -55,18 +50,14 @@ function Booking() {
     <div className="container-fluid bg-light d-flex flex-column justify-content-center align-items-center ">
       <h1>Bookings</h1>
       <ReusableTable
-        data={transformedData || []}
+        data={transformedData && transformedData}
         columns={columns}
         isLoading={isLoading}
         isFetching={isFetching}
         onUpdate={handleEdit}
         onDelete={handleDelete}
       />
-      <Pagination
-        currentPage={Page}
-        totalPages={totalPages}
-        onPageChange={(newPage) => setPage(newPage)}
-      />
+      <Pagination currentPage={Page} totalPages={totalPages} onPageChange={(newPage) => setPage(newPage)} />
     </div>
   );
 }

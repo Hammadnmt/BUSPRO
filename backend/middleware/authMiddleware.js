@@ -5,6 +5,7 @@ const validateToken = (req, res, next) => {
   try {
     // Retrieve the authentication token from cookies
     let authToken = req.cookies?.authToken; // Corrected the header name
+    console.log("req in auth middleware");
 
     if (!authToken) {
       throw new Error("User not authorized or Token Expired");

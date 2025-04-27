@@ -34,9 +34,7 @@ export default function Booking({ data, isActive }) {
                   <div className="d-flex align-items-center gap-3">
                     <Clock size={20} className="text-primary" />
                     <div className="d-flex align-items-center gap-2 flex-grow-1">
-                      <span className="h5 mb-0">
-                        {extractTime12HourFormat(data?.trip?.departure_time)}
-                      </span>
+                      <span className="h5 mb-0">{extractTime12HourFormat(data?.trip?.departure_time)}</span>
                       <div className="flex-grow-1 px-3 border-top border-2 position-relative">
                         <ArrowRight
                           size={20}
@@ -48,9 +46,7 @@ export default function Booking({ data, isActive }) {
                           }}
                         />
                       </div>
-                      <span className="h5 mb-0">
-                        {extractTime12HourFormat(data?.trip?.arrival_time)}
-                      </span>
+                      <span className="h5 mb-0">{extractTime12HourFormat(data?.trip?.arrival_time)}</span>
                     </div>
                   </div>
                 </Card.Body>
@@ -62,9 +58,7 @@ export default function Booking({ data, isActive }) {
                   <div className="d-flex align-items-center gap-3">
                     <MapPin size={20} className="text-primary" />
                     <div className="d-flex align-items-center gap-2 flex-grow-1">
-                      <span className="h6 mb-0">
-                        {data?.trip?.Route?.source || "N/A"}
-                      </span>
+                      <span className="h6 mb-0">{data?.trip?.Route?.source || "N/A"}</span>
                       <div className="flex-grow-1 px-3 border-top border-2 position-relative">
                         <ArrowRight
                           size={20}
@@ -76,9 +70,7 @@ export default function Booking({ data, isActive }) {
                           }}
                         />
                       </div>
-                      <span className="h6 mb-0">
-                        {data?.trip?.Route?.destination || "N/A"}
-                      </span>
+                      <span className="h6 mb-0">{data?.trip?.Route?.destination || "N/A"}</span>
                     </div>
                   </div>
                 </Card.Body>
@@ -102,16 +94,10 @@ export default function Booking({ data, isActive }) {
               {/* Feature Badges */}
               {isActive ? (
                 <div className="d-flex gap-2 mt-4">
-                  <Badge
-                    bg="warning"
-                    className="px-3 py-2 d-flex align-items-center gap-2"
-                  >
+                  <Badge bg="warning" className="px-3 py-2 d-flex align-items-center gap-2">
                     <span className="fw-normal">Luxury</span>
                   </Badge>
-                  <Badge
-                    bg="success"
-                    className="px-3 py-2 d-flex align-items-center gap-2"
-                  >
+                  <Badge bg="success" className="px-3 py-2 d-flex align-items-center gap-2">
                     <span className="fw-normal">Refundable</span>
                   </Badge>
                 </div>

@@ -3,21 +3,12 @@ import { useNavigate, Navigate, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { useRegisterUserMutation } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-  Spinner,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Spinner } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [registerUser, { isLoading, isSuccess, error: serverError }] =
-    useRegisterUserMutation();
+  const [registerUser, { isLoading, isSuccess, error: serverError }] = useRegisterUserMutation();
   const {
     register,
     handleSubmit,
@@ -56,47 +47,33 @@ const Signup = () => {
   }
 
   return (
-    <Container
-      fluid
-      className="min-vh-100 bg-light d-flex align-items-center justify-content-center p-4"
-    >
+    <Container fluid className="min-vh-100 bg-light d-flex align-items-center justify-content-center p-4">
       <Row className="justify-content-center w-100">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Card className="border-0 shadow-lg">
             <div className="py-3 px-4" style={{ backgroundColor: "#364F6B" }}>
-              <h2 className="text-white text-center mb-0 fw-bold">
-                Join BusPro
-              </h2>
+              <h2 className="text-white text-center mb-0 fw-bold">Join BusPro</h2>
             </div>
 
             <Card.Body className="p-4">
-              <h3
-                className="text-center mb-4 fw-semibold"
-                style={{ color: "#364F6B" }}
-              >
+              <h3 className="text-center mb-4 fw-semibold" style={{ color: "#364F6B" }}>
                 Create Your Account
               </h3>
 
               <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ color: "#364F6B" }}>
-                    Full Name
-                  </Form.Label>
+                  <Form.Label style={{ color: "#364F6B" }}>Full Name</Form.Label>
                   <Form.Control
                     type="text"
                     isInvalid={!!errors.name}
                     placeholder="Enter your name"
                     {...register("name", { required: "Name is required" })}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.name?.message}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.name?.message}</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ color: "#364F6B" }}>
-                    Email Address
-                  </Form.Label>
+                  <Form.Label style={{ color: "#364F6B" }}>Email Address</Form.Label>
                   <Form.Control
                     type="email"
                     isInvalid={!!errors.email}
@@ -104,15 +81,12 @@ const Signup = () => {
                     {...register("email", {
                       required: "Email is required",
                       pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                         message: "Invalid email format",
                       },
                     })}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email?.message}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
@@ -129,15 +103,11 @@ const Signup = () => {
                       },
                     })}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.password?.message}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.password?.message}</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label style={{ color: "#364F6B" }}>
-                    Phone Number
-                  </Form.Label>
+                  <Form.Label style={{ color: "#364F6B" }}>Phone Number</Form.Label>
                   <Form.Control
                     type="text"
                     isInvalid={!!errors.phone_number}
@@ -150,9 +120,7 @@ const Signup = () => {
                       },
                     })}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.phone_number?.message}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.phone_number?.message}</Form.Control.Feedback>
                 </Form.Group>
                 <Button
                   type="submit"
