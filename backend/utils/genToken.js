@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 
-const genToken = (data) => {
+const genToken = ({ uId, email, role }) => {
   const accessToken = jwt.sign(
     {
       user: {
-        id: data.id,
-        email: data.email,
-        role: data.role,
+        uid: uId,
+        email: email,
+        role: role,
       },
     },
     process.env.JWT_SCRT,

@@ -39,7 +39,7 @@ const Trip = ({ data }) => {
   } = useGetBookingsByTripIdQuery(data?._id, {
     skip: !showSeats,
   });
-
+  console.log("selectedSeat", selectedSeat);
   // Seat information helpers
   const getSeatInfo = (seatNum) => {
     if (!bookingData) return { reserved: false, gender: null };
@@ -57,9 +57,7 @@ const Trip = ({ data }) => {
       };
     }
 
-    const userSelection = bookedInfo.find(
-      (seat) => seat.seatNumber === seatNum
-    );
+    const userSelection = bookedInfo.find((seat) => seat.seatNumber === seatNum);
     return {
       reserved: false,
       gender: userSelection?.gender || null,
@@ -68,14 +66,10 @@ const Trip = ({ data }) => {
 
   // Event handlers
   const handleSeatClick = (event, seatNumber) => {
-    const isAlreadySelected = bookedInfo.some(
-      (seat) => seat.seatNumber === seatNumber
-    );
+    const isAlreadySelected = bookedInfo.some((seat) => seat.seatNumber === seatNumber);
 
     if (isAlreadySelected) {
-      setBookedInfo((prev) =>
-        prev.filter((seat) => seat.seatNumber !== seatNumber)
-      );
+      setBookedInfo((prev) => prev.filter((seat) => seat.seatNumber !== seatNumber));
       setSelectedSeat(null);
     } else {
       setTarget(event.target);
@@ -85,13 +79,9 @@ const Trip = ({ data }) => {
 
   const handleGenderSelect = (gender) => {
     setBookedInfo((prev) => {
-      const existingSeat = prev.find(
-        (seat) => seat.seatNumber === selectedSeat
-      );
+      const existingSeat = prev.find((seat) => seat.seatNumber === selectedSeat);
       if (existingSeat) {
-        return prev.map((seat) =>
-          seat.seatNumber === selectedSeat ? { ...seat, gender } : seat
-        );
+        return prev.map((seat) => (seat.seatNumber === selectedSeat ? { ...seat, gender } : seat));
       }
       return [...prev, { seatNumber: selectedSeat, gender }];
     });
@@ -99,9 +89,7 @@ const Trip = ({ data }) => {
   };
 
   const handleUnselectSeat = (seatNumber) => {
-    setBookedInfo((prev) =>
-      prev.filter((seat) => seat.seatNumber !== seatNumber)
-    );
+    setBookedInfo((prev) => prev.filter((seat) => seat.seatNumber !== seatNumber));
   };
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -144,8 +132,7 @@ const Trip = ({ data }) => {
                 bg={seat.gender === "male" ? "primary" : "danger"}
                 className="p-2"
                 style={{
-                  backgroundColor:
-                    seat.gender === "male" ? COLORS.primary : COLORS.accent,
+                  backgroundColor: seat.gender === "male" ? COLORS.primary : COLORS.accent,
                 }}
               >
                 Seat {seat.seatNumber}
@@ -190,10 +177,7 @@ const Trip = ({ data }) => {
                 <span>{data?.Route?.destination}</span>
               </div>
 
-              <Card
-                className="mb-3 border-0"
-                style={{ backgroundColor: COLORS.light }}
-              >
+              <Card className="mb-3 border-0" style={{ backgroundColor: COLORS.light }}>
                 <Card.Body>
                   <div style={{ color: COLORS.secondary }} className="mb-2">
                     Pickup Point
@@ -203,18 +187,10 @@ const Trip = ({ data }) => {
               </Card>
 
               <div className="d-flex gap-2">
-                <Badge
-                  pill
-                  bg="info"
-                  style={{ backgroundColor: COLORS.secondary }}
-                >
+                <Badge pill bg="info" style={{ backgroundColor: COLORS.secondary }}>
                   Luxury
                 </Badge>
-                <Badge
-                  pill
-                  bg="danger"
-                  style={{ backgroundColor: COLORS.accent }}
-                >
+                <Badge pill bg="danger" style={{ backgroundColor: COLORS.accent }}>
                   Refundable
                 </Badge>
               </div>
@@ -262,10 +238,7 @@ const Trip = ({ data }) => {
           <div className="mt-4 pt-4 border-top">
             {isLoading ? (
               <div className="text-center p-4">
-                <Spinner
-                  animation="border"
-                  style={{ color: COLORS.secondary }}
-                />
+                <Spinner animation="border" style={{ color: COLORS.secondary }} />
               </div>
             ) : error ? (
               <Alert variant="danger">Error loading seat data</Alert>
@@ -282,9 +255,7 @@ const Trip = ({ data }) => {
                   {Array.from({ length: TOTAL_SEATS }, (_, index) => {
                     const seatNumber = index + 1;
                     const { reserved, gender } = getSeatInfo(seatNumber);
-                    const isSelected = bookedInfo.some(
-                      (seat) => seat.seatNumber === seatNumber
-                    );
+                    const isSelected = bookedInfo.some((seat) => seat.seatNumber === seatNumber);
 
                     const seatStyle = {
                       backgroundColor:
@@ -293,8 +264,7 @@ const Trip = ({ data }) => {
                             ? COLORS.primary
                             : COLORS.accent
                           : COLORS.light,
-                      border:
-                        !reserved && !isSelected ? "1px solid #ddd" : "none",
+                      border: !reserved && !isSelected ? "1px solid #ddd" : "none",
                       color: reserved || isSelected ? "#fff" : "inherit",
                       cursor: !reserved ? "pointer" : "not-allowed",
                       transition: "all 0.2s ease",
@@ -305,18 +275,12 @@ const Trip = ({ data }) => {
                         <div
                           className="p-3 rounded text-center fw-bold"
                           style={seatStyle}
-                          onClick={(e) =>
-                            !reserved && handleSeatClick(e, seatNumber)
-                          }
+                          onClick={(e) => !reserved && handleSeatClick(e, seatNumber)}
                         >
                           {seatNumber}
                         </div>
 
-                        <Overlay
-                          show={selectedSeat === seatNumber}
-                          target={target}
-                          placement="top"
-                        >
+                        <Overlay show={selectedSeat === seatNumber} target={target} placement="top">
                           <Popover className="shadow-lg border-0">
                             <Popover.Header className="bg-white border-bottom py-2">
                               Select Gender for Seat {seatNumber}
@@ -336,16 +300,10 @@ const Trip = ({ data }) => {
                                           width: "20px",
                                           height: "20px",
                                           borderRadius: "4px",
-                                          backgroundColor:
-                                            gender === "male"
-                                              ? COLORS.primary
-                                              : COLORS.accent,
+                                          backgroundColor: gender === "male" ? COLORS.primary : COLORS.accent,
                                         }}
                                       />
-                                      <span>
-                                        {gender.charAt(0).toUpperCase() +
-                                          gender.slice(1)}
-                                      </span>
+                                      <span>{gender.charAt(0).toUpperCase() + gender.slice(1)}</span>
                                     </div>
                                   </div>
                                 ))}

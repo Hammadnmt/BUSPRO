@@ -2,15 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { ChevronDown, Search } from "lucide-react";
-import {
-  Container,
-  Card,
-  Form,
-  Button,
-  Row,
-  Col,
-  Dropdown,
-} from "react-bootstrap";
+import { Container, Card, Form, Button, Row, Col, Dropdown } from "react-bootstrap";
 import { useLazyGetTripByRouteQuery } from "../features/trip/tripSlice";
 import { useGetAllroutesQuery } from "../features/route/routeSlice";
 import Trip from "./Trip";
@@ -18,8 +10,7 @@ import { getCurrentDate } from "../utils/getCurrenDate";
 
 const TravelSearchForm = () => {
   const { data: routeData } = useGetAllroutesQuery();
-  const [triggerQuery, { data: tripData, isLoading }] =
-    useLazyGetTripByRouteQuery();
+  const [triggerQuery, { data: tripData, isLoading }] = useLazyGetTripByRouteQuery();
   const [suggestions, setSuggestions] = useState({ from: [], to: [] });
   const [showSuggestions, setShowSuggestions] = useState({
     from: false,
@@ -49,9 +40,7 @@ const TravelSearchForm = () => {
 
   const getDestinations = (source) => {
     if (!routeData) return [];
-    return routeData
-      .filter((route) => route.source === source)
-      .map((route) => route.destination);
+    return routeData.filter((route) => route.source === source).map((route) => route.destination);
   };
 
   const handleInputChange = (field, value) => {
@@ -100,9 +89,7 @@ const TravelSearchForm = () => {
     <Container className="py-4">
       <Card className="border-0 shadow">
         <div className="py-3 px-4" style={{ backgroundColor: "#364F6B" }}>
-          <h2 className="text-white text-center mb-0 fw-bold">
-            Find Your Perfect Journey
-          </h2>
+          <h2 className="text-white text-center mb-0 fw-bold">Find Your Perfect Journey</h2>
         </div>
 
         <Card.Body className="p-4">
@@ -111,9 +98,7 @@ const TravelSearchForm = () => {
               {/* From City */}
               <Col md={4}>
                 <Form.Group>
-                  <Form.Label style={{ color: "#364F6B" }}>
-                    From City
-                  </Form.Label>
+                  <Form.Label style={{ color: "#364F6B" }}>From City</Form.Label>
                   <div className="position-relative">
                     <Controller
                       name="from"
@@ -125,15 +110,11 @@ const TravelSearchForm = () => {
                           type="text"
                           isInvalid={!!errors.from}
                           placeholder="Select departure city"
-                          onChange={(e) =>
-                            handleInputChange("from", e.target.value)
-                          }
+                          onChange={(e) => handleInputChange("from", e.target.value)}
                         />
                       )}
                     />
-                    <Dropdown
-                      show={showSuggestions.from && suggestions.from.length > 0}
-                    >
+                    <Dropdown show={showSuggestions.from && suggestions.from.length > 0}>
                       <Dropdown.Menu
                         style={{
                           width: "100%",
@@ -142,18 +123,13 @@ const TravelSearchForm = () => {
                         }}
                       >
                         {suggestions.from.map((city, index) => (
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() => handleSuggestionClick(city, "from")}
-                          >
+                          <Dropdown.Item key={index} onClick={() => handleSuggestionClick(city, "from")}>
                             {city}
                           </Dropdown.Item>
                         ))}
                       </Dropdown.Menu>
                     </Dropdown>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.from?.message}
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">{errors.from?.message}</Form.Control.Feedback>
                   </div>
                 </Form.Group>
               </Col>
@@ -173,15 +149,11 @@ const TravelSearchForm = () => {
                           type="text"
                           isInvalid={!!errors.to}
                           placeholder="Select destination city"
-                          onChange={(e) =>
-                            handleInputChange("to", e.target.value)
-                          }
+                          onChange={(e) => handleInputChange("to", e.target.value)}
                         />
                       )}
                     />
-                    <Dropdown
-                      show={showSuggestions.to && suggestions.to.length > 0}
-                    >
+                    <Dropdown show={showSuggestions.to && suggestions.to.length > 0}>
                       <Dropdown.Menu
                         style={{
                           width: "100%",
@@ -190,18 +162,13 @@ const TravelSearchForm = () => {
                         }}
                       >
                         {suggestions.to.map((city, index) => (
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() => handleSuggestionClick(city, "to")}
-                          >
+                          <Dropdown.Item key={index} onClick={() => handleSuggestionClick(city, "to")}>
                             {city}
                           </Dropdown.Item>
                         ))}
                       </Dropdown.Menu>
                     </Dropdown>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.to?.message}
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">{errors.to?.message}</Form.Control.Feedback>
                   </div>
                 </Form.Group>
               </Col>
@@ -209,25 +176,16 @@ const TravelSearchForm = () => {
               {/* Date Selection */}
               <Col md={4}>
                 <Form.Group>
-                  <Form.Label style={{ color: "#364F6B" }}>
-                    Travel Date
-                  </Form.Label>
+                  <Form.Label style={{ color: "#364F6B" }}>Travel Date</Form.Label>
                   <Controller
                     name="date"
                     control={control}
                     rules={{ required: "Travel date is required" }}
                     render={({ field }) => (
-                      <Form.Control
-                        {...field}
-                        type="date"
-                        min={getCurrentDate()}
-                        isInvalid={!!errors.date}
-                      />
+                      <Form.Control {...field} type="date" min={getCurrentDate()} isInvalid={!!errors.date} />
                     )}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.date?.message}
-                  </Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.date?.message}</Form.Control.Feedback>
                 </Form.Group>
               </Col>
             </Row>

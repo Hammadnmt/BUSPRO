@@ -16,6 +16,8 @@ const cookieParser = require("cookie-parser");
 const validateJsonBody = require("./middleware/validJson");
 const errorHandler = require("./middleware/errorMiddleware");
 const cors = require("cors");
+const admin = require("firebase-admin");
+const { applicationDefault } = require("firebase-admin/app");
 
 const corsOptions = {
   origin: "http://localhost:5173",
@@ -41,5 +43,7 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server on http://localhost:${PORT}`);
+  console.log("config", process.env.GOOGLE_APPLICATION_CREDENTIALS);
 });
+
 module.exports = app;

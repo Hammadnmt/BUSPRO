@@ -1,7 +1,39 @@
 const User = require("../../model/user/userModel");
 const genToken = require("../../utils/genToken");
 const comparePasswords = require("../../utils/hashtoPlain");
+const admin = require("../../firebaseAdmin");
 
+const handleUser = async (req, res, next) => {
+  const { fName, lName, pNumber, isNew, token, email } = req.body;
+  try {
+    const userExist = await User.findOne({ email: email });
+    if (!userExist && isNew) {
+      const userdata = await User.create({
+        name: fName + " " + lName,
+        email,
+        phone_number: pNumber,
+      });
+      if (!userdata) {
+        throw new Error("Unable to create user");
+      }
+      const accessToken = genToken({ token, email, role: userdata.role });
+      res.cookie("authToken", accessToken, { httpOnly: true, secure: true, sameSite: "None" });
+      res.status(200).json({
+        status: true,
+        message: "User Created",
+      });
+    }
+
+    const accessToken = genToken({ token, email, role: userExist.role });
+    res.cookie("authToken", accessToken, { httpOnly: true, secure: true, sameSite: "None" });
+    res.status(200).json({
+      email: userExist.email,
+      role: userExist.role,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -57,6 +89,7 @@ const logout = (req, res) => {
 };
 
 module.exports = {
+  handleUser,
   login,
   signup,
   logout,
